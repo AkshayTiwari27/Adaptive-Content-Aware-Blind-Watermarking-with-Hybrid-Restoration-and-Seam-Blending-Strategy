@@ -1,0 +1,11 @@
+Image,PSNR (dB),SSIM
+Boat,44.15,0.9872
+Chemicalplant,44.19,0.9930
+Clock,44.22,0.9776
+Houses,44.05,0.9792
+JetPlane,44.25,0.9796
+Lake,44.29,0.9872
+Mandril,44.29,0.9945
+Peppers,44.33,0.9833
+Walter-Cronkite,44.16,0.9781
+AVERAGE,44.21,0.9844
