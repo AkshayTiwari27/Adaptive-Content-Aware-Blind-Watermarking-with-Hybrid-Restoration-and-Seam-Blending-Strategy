@@ -1,0 +1,8 @@
+Attack Type,Average TDR (%)
+Content Removal,100.00
+Copy-Move,99.94
+Splicing,100.00
+Cropping (40%),99.98
+JPEG Compression (Q=50),99.97
+Salt & Pepper Noise (0.05),99.96
+AVERAGE,99.97

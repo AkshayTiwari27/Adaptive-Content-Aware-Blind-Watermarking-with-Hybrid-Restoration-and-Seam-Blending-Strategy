@@ -3,8 +3,8 @@ import numpy as np
 import hashlib
 import os
 
-print("--- Smart Self-Recovery System (DLSBM v15 - Ultra-HD Recovery) ---")
-print("--- [Fixed: Smart Center-Border Mapping + 2x2 High-Res Payload] ---")
+print("--- Smart Self-Recovery System (DLSBM v17 - Ultra-HD Recovery) ---")
+print("--- [Fixed: 3-Way Attack Classification (JPEG, Noise, Structural)] ---")
 
 # --- CONFIGURATION ---
 BLOCK_SIZE = 4   # 4x4 Blocks
@@ -47,7 +47,6 @@ def get_smart_mapping(h, w, block_size, key):
         mapping[b] = c  # Border block stores its backup in a Center block
         mapping[c] = b  # Center block stores its backup in a Border block
         
-    # Handle odd number of total blocks (exact center maps to itself)
     if total_blocks % 2 != 0:
         mapping[center_blocks[-1]] = center_blocks[-1]
         
@@ -87,17 +86,14 @@ def embed(image_path, output_path):
                 clean_block = (block & 0xFC) 
                 blocks.append(clean_block)
                 
-                # Calculate 2x2 sub-block averages for 4x higher resolution
                 tl = np.mean(clean_block[0:2, 0:2])
                 tr = np.mean(clean_block[0:2, 2:4])
                 bl = np.mean(clean_block[2:4, 0:2])
                 br = np.mean(clean_block[2:4, 2:4])
                 
-                # Quantize to 5 bits (0-31 range)
                 q_tl, q_tr = int(tl) >> 3, int(tr) >> 3
                 q_bl, q_br = int(bl) >> 3, int(br) >> 3
                 
-                # 5 bits * 4 quadrants = 20 bits
                 payload = f"{q_tl:05b}{q_tr:05b}{q_bl:05b}{q_br:05b}"
                 recovery_bits_list.append(payload)
 
@@ -111,12 +107,10 @@ def embed(image_path, output_path):
                 partner_idx = mapping[idx]
                 recovery_payload = recovery_bits_list[partner_idx]
                 
-                # 12 bits auth + 20 bits HQ recovery = 32 bits
                 full_payload = auth_payload + recovery_payload 
                 
                 flat = current_block.flatten()
                 bit_idx = 0
-                # Embed across all 16 pixels using 2 LSBs (16 * 2 = 32)
                 for k in range(16):
                     b1 = int(full_payload[bit_idx])
                     b2 = int(full_payload[bit_idx+1])
@@ -138,8 +132,6 @@ def recover(image_path, output_path):
     
     h, w, c = img.shape
     mapping = get_smart_mapping(h, w, BLOCK_SIZE, KEY)
-    
-    # Reverse mapping logic is identical since mapping[b]=c and mapping[c]=b
     reverse_mapping = mapping 
 
     recovered_img = img.copy()
@@ -159,6 +151,7 @@ def recover(image_path, output_path):
         # --- PASS 1: Analysis & Extraction ---
         idx = 0
         tamper_count = 0
+        total_blocks_channel = (h // BLOCK_SIZE) * (w // BLOCK_SIZE)
         
         for i in range(0, h, BLOCK_SIZE):
             for j in range(0, w, BLOCK_SIZE):
@@ -166,14 +159,12 @@ def recover(image_path, output_path):
                 flat = block.flatten()
                 
                 payload = ""
-                # Extract 32 bits from 16 pixels
                 for k in range(16):
                     val = flat[k]
                     payload += str(val & 1) + str((val >> 1) & 1)
                 
                 extracted_auth.append(payload[:12])
                 
-                # Reconstruct the four 5-bit values back to 8-bit scale
                 rec_tl = (int(payload[12:17], 2) << 3) + 4
                 rec_tr = (int(payload[17:22], 2) << 3) + 4
                 rec_bl = (int(payload[22:27], 2) << 3) + 4
@@ -187,11 +178,17 @@ def recover(image_path, output_path):
                 
                 if cal_hash != payload[:12]:
                     tamper_count += 1
-                
+                    
                 idx += 1
 
-        tamper_rate = tamper_count / ( (h // BLOCK_SIZE) * (w // BLOCK_SIZE) )
-        is_global_attack = tamper_rate > 0.40
+        # Calculate exact attack parameters
+        tamper_rate = tamper_count / total_blocks_channel
+        extreme_pixels = np.sum((channel == 0) | (channel == 255))
+        noise_ratio = extreme_pixels / (h * w)
+        
+        # 3-Way Attack Classification
+        is_noise_attack = noise_ratio > 0.015
+        is_jpeg_attack = tamper_rate > 0.85 and not is_noise_attack
 
         # --- PASS 2: Restoration ---
         idx = 0
@@ -207,11 +204,14 @@ def recover(image_path, output_path):
                     provider_idx = reverse_mapping[idx]
                     is_backup_valid = calculated_hashes[provider_idx] == extracted_auth[provider_idx]
                     
-                    # 1. LOCAL ATTACKS & CROPPING (Block is destroyed/black)
-                    if not is_global_attack or block_mean < 5:
+                    # 1. JPEG Compression Bypass (Preserve visual data, ignore broken LSBs)
+                    if is_jpeg_attack and block_mean > 5:
+                        pass 
+
+                    # 2. Structural Attacks (Copy-Move, Splicing) & Blackouts (Cropping, Removal)
+                    elif not is_noise_attack or block_mean < 5:
                         if is_backup_valid:
                             hq_vals = extracted_recovery[provider_idx]
-                            # Apply the high-res 2x2 quadrants
                             rec_channel[i:i+2, j:j+2] = hq_vals[0]
                             rec_channel[i:i+2, j+2:j+4] = hq_vals[1]
                             rec_channel[i+2:i+4, j:j+2] = hq_vals[2]
@@ -220,8 +220,8 @@ def recover(image_path, output_path):
                         else:
                             global_dead_mask[i:i+BLOCK_SIZE, j:j+BLOCK_SIZE] = 255
 
-                    # 2. NOISE (Pixel Repair)
-                    elif is_global_attack and (np.min(block) == 0 or np.max(block) == 255):
+                    # 3. Noise (Pixel Repair via Median Filter)
+                    elif is_noise_attack:
                         for py in range(BLOCK_SIZE):
                             for px in range(BLOCK_SIZE):
                                 pixel_val = block[py, px]
@@ -238,7 +238,6 @@ def recover(image_path, output_path):
                                     if neighbors:
                                         rec_channel[y, x] = int(np.median(neighbors))
                                     elif is_backup_valid:
-                                        # Map specific pixel to its proper 2x2 quadrant backup
                                         quad_idx = (py // 2) * 2 + (px // 2)
                                         rec_channel[y, x] = extracted_recovery[provider_idx][quad_idx]
 
@@ -255,7 +254,6 @@ def recover(image_path, output_path):
         kernel = np.ones((3,3), np.uint8)
         seam_mask = cv2.morphologyEx(global_restored_mask, cv2.MORPH_GRADIENT, kernel)
         seam_mask = cv2.dilate(seam_mask, kernel, iterations=1) 
-        # Using a tiny radius ensures we keep the high-res detail while blending the edges
         recovered_img = cv2.inpaint(recovered_img, seam_mask, 2, cv2.INPAINT_TELEA)
 
     cv2.imwrite("final_tamper_map.png", tamper_map)

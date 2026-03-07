@@ -1,0 +1,342 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="438pt" height="953pt" viewBox="0.00 0.00 438.00 953.00">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 949.35)">
+<title>TamperRecovery</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-949.35 434.2,-949.35 434.2,4 -4,4"/>
+<!-- Input -->
+<g id="node1" class="node">
+<title>Input</title>
+<path fill="white" stroke="black" d="M233.4,-941.65C233.4,-943.69 210.81,-945.35 183,-945.35 155.19,-945.35 132.6,-943.69 132.6,-941.65 132.6,-941.65 132.6,-908.35 132.6,-908.35 132.6,-906.31 155.19,-904.65 183,-904.65 210.81,-904.65 233.4,-906.31 233.4,-908.35 233.4,-908.35 233.4,-941.65 233.4,-941.65"/>
+<path fill="none" stroke="black" d="M233.4,-941.65C233.4,-939.61 210.81,-937.95 183,-937.95 155.19,-937.95 132.6,-939.61 132.6,-941.65"/>
+<text xml:space="preserve" text-anchor="middle" x="183" y="-927.7" font-family="Times,serif" font-size="9.00">Watermarked Image</text>
+<text xml:space="preserve" text-anchor="middle" x="183" y="-916.9" font-family="Times,serif" font-size="9.00">(Possibly Tampered)</text>
+</g>
+<!-- Split -->
+<g id="node2" class="node">
+<title>Split</title>
+<polygon fill="white" stroke="black" points="233.4,-877.65 132.6,-877.65 132.6,-848.05 233.4,-848.05 233.4,-877.65"/>
+<text xml:space="preserve" text-anchor="middle" x="183" y="-865.55" font-family="Times,serif" font-size="9.00">Channel Separation</text>
+<text xml:space="preserve" text-anchor="middle" x="183" y="-854.75" font-family="Times,serif" font-size="9.00">(R, G, B)</text>
+</g>
+<!-- Input&#45;&gt;Split -->
+<g id="edge1" class="edge">
+<title>Input-&gt;Split</title>
+<path fill="none" stroke="black" d="M183,-904.3C183,-904.3 183,-889.47 183,-889.47"/>
+<polygon fill="black" stroke="black" points="186.5,-889.47 183,-879.47 179.5,-889.47 186.5,-889.47"/>
+</g>
+<!-- Div -->
+<g id="node3" class="node">
+<title>Div</title>
+<polygon fill="white" stroke="black" points="233.4,-821.05 132.6,-821.05 132.6,-795.85 233.4,-795.85 233.4,-821.05"/>
+<text xml:space="preserve" text-anchor="middle" x="183" y="-805.75" font-family="Times,serif" font-size="9.00">Divide into 4x4 Blocks</text>
+</g>
+<!-- Split&#45;&gt;Div -->
+<g id="edge2" class="edge">
+<title>Split-&gt;Div</title>
+<path fill="none" stroke="black" d="M183,-847.7C183,-847.7 183,-832.83 183,-832.83"/>
+<polygon fill="black" stroke="black" points="186.5,-832.83 183,-822.83 179.5,-832.83 186.5,-832.83"/>
+</g>
+<!-- Clear -->
+<g id="node4" class="node">
+<title>Clear</title>
+<polygon fill="white" stroke="black" points="175.2,-768.85 88.8,-768.85 88.8,-739.25 175.2,-739.25 175.2,-768.85"/>
+<text xml:space="preserve" text-anchor="middle" x="132" y="-756.75" font-family="Times,serif" font-size="9.00">Clear 2 LSBs</text>
+<text xml:space="preserve" text-anchor="middle" x="132" y="-745.95" font-family="Times,serif" font-size="9.00">(Block &amp; 0xFC)</text>
+</g>
+<!-- Div&#45;&gt;Clear -->
+<g id="edge3" class="edge">
+<title>Div-&gt;Clear</title>
+<path fill="none" stroke="black" d="M153.9,-795.56C153.9,-795.56 153.9,-780.68 153.9,-780.68"/>
+<polygon fill="black" stroke="black" points="157.4,-780.68 153.9,-770.68 150.4,-780.68 157.4,-780.68"/>
+</g>
+<!-- ExtLSB -->
+<g id="node8" class="node">
+<title>ExtLSB</title>
+<polygon fill="white" stroke="black" points="279.2,-768.85 192.8,-768.85 192.8,-739.25 279.2,-739.25 279.2,-768.85"/>
+<text xml:space="preserve" text-anchor="middle" x="236" y="-756.75" font-family="Times,serif" font-size="9.00">Extract 2 LSBs</text>
+<text xml:space="preserve" text-anchor="middle" x="236" y="-745.95" font-family="Times,serif" font-size="9.00">of Block</text>
+</g>
+<!-- Div&#45;&gt;ExtLSB -->
+<g id="edge4" class="edge">
+<title>Div-&gt;ExtLSB</title>
+<path fill="none" stroke="black" d="M213.1,-795.56C213.1,-795.56 213.1,-780.68 213.1,-780.68"/>
+<polygon fill="black" stroke="black" points="216.6,-780.68 213.1,-770.68 209.6,-780.68 216.6,-780.68"/>
+</g>
+<!-- ExtData -->
+<g id="node5" class="node">
+<title>ExtData</title>
+<polygon fill="white" stroke="black" points="175.2,-712.25 88.8,-712.25 88.8,-682.65 175.2,-682.65 175.2,-712.25"/>
+<text xml:space="preserve" text-anchor="middle" x="132" y="-700.15" font-family="Times,serif" font-size="9.00">Extract Block</text>
+<text xml:space="preserve" text-anchor="middle" x="132" y="-689.35" font-family="Times,serif" font-size="9.00">Data + Index</text>
+</g>
+<!-- Clear&#45;&gt;ExtData -->
+<g id="edge5" class="edge">
+<title>Clear-&gt;ExtData</title>
+<path fill="none" stroke="black" d="M132,-738.88C132,-738.88 132,-724.17 132,-724.17"/>
+<polygon fill="black" stroke="black" points="135.5,-724.17 132,-714.17 128.5,-724.17 135.5,-724.17"/>
+</g>
+<!-- Hash -->
+<g id="node6" class="node">
+<title>Hash</title>
+<polygon fill="white" stroke="black" points="175.2,-655.65 88.8,-655.65 88.8,-626.05 175.2,-626.05 175.2,-655.65"/>
+<text xml:space="preserve" text-anchor="middle" x="132" y="-643.55" font-family="Times,serif" font-size="9.00">MD5 Hash</text>
+<text xml:space="preserve" text-anchor="middle" x="132" y="-632.75" font-family="Times,serif" font-size="9.00">Generation</text>
+</g>
+<!-- ExtData&#45;&gt;Hash -->
+<g id="edge6" class="edge">
+<title>ExtData-&gt;Hash</title>
+<path fill="none" stroke="black" d="M132,-682.28C132,-682.28 132,-667.57 132,-667.57"/>
+<polygon fill="black" stroke="black" points="135.5,-667.57 132,-657.57 128.5,-667.57 135.5,-667.57"/>
+</g>
+<!-- Agen -->
+<g id="node7" class="node">
+<title>Agen</title>
+<polygon fill="white" stroke="black" points="195.2,-599.05 108.8,-599.05 108.8,-569.45 195.2,-569.45 195.2,-599.05"/>
+<text xml:space="preserve" text-anchor="middle" x="152" y="-586.95" font-family="Times,serif" font-size="9.00">Generated Auth</text>
+<text xml:space="preserve" text-anchor="middle" x="152" y="-576.15" font-family="Times,serif" font-size="9.00">(12 bits: A_gen)</text>
+</g>
+<!-- Hash&#45;&gt;Agen -->
+<g id="edge7" class="edge">
+<title>Hash-&gt;Agen</title>
+<path fill="none" stroke="black" d="M142,-625.68C142,-625.68 142,-610.97 142,-610.97"/>
+<polygon fill="black" stroke="black" points="145.5,-610.97 142,-600.97 138.5,-610.97 145.5,-610.97"/>
+</g>
+<!-- Comp -->
+<g id="node12" class="node">
+<title>Comp</title>
+<polygon fill="white" stroke="black" points="191,-542.45 112.72,-520.85 191,-499.25 269.28,-520.85 191,-542.45"/>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-523.55" font-family="Times,serif" font-size="9.00">Compare:</text>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-512.75" font-family="Times,serif" font-size="9.00">A_gen == A_ext?</text>
+</g>
+<!-- Agen&#45;&gt;Comp -->
+<g id="edge11" class="edge">
+<title>Agen-&gt;Comp</title>
+<path fill="none" stroke="black" d="M153.96,-569.23C153.96,-569.23 153.96,-543.91 153.96,-543.91"/>
+<polygon fill="black" stroke="black" points="157.46,-543.91 153.96,-533.91 150.46,-543.91 157.46,-543.91"/>
+</g>
+<!-- Parse -->
+<g id="node9" class="node">
+<title>Parse</title>
+<polygon fill="white" stroke="black" points="279.2,-712.25 192.8,-712.25 192.8,-682.65 279.2,-682.65 279.2,-712.25"/>
+<text xml:space="preserve" text-anchor="middle" x="236" y="-700.15" font-family="Times,serif" font-size="9.00">Parse 32-bit</text>
+<text xml:space="preserve" text-anchor="middle" x="236" y="-689.35" font-family="Times,serif" font-size="9.00">Payload</text>
+</g>
+<!-- ExtLSB&#45;&gt;Parse -->
+<g id="edge8" class="edge">
+<title>ExtLSB-&gt;Parse</title>
+<path fill="none" stroke="black" d="M236,-738.88C236,-738.88 236,-724.17 236,-724.17"/>
+<polygon fill="black" stroke="black" points="239.5,-724.17 236,-714.17 232.5,-724.17 239.5,-724.17"/>
+</g>
+<!-- Aext -->
+<g id="node10" class="node">
+<title>Aext</title>
+<polygon fill="white" stroke="black" points="279.2,-655.65 192.8,-655.65 192.8,-626.05 279.2,-626.05 279.2,-655.65"/>
+<text xml:space="preserve" text-anchor="middle" x="236" y="-643.55" font-family="Times,serif" font-size="9.00">Extracted Auth</text>
+<text xml:space="preserve" text-anchor="middle" x="236" y="-632.75" font-family="Times,serif" font-size="9.00">(12 bits: A_ext)</text>
+</g>
+<!-- Parse&#45;&gt;Aext -->
+<g id="edge9" class="edge">
+<title>Parse-&gt;Aext</title>
+<path fill="none" stroke="black" d="M236,-682.28C236,-682.28 236,-667.57 236,-667.57"/>
+<polygon fill="black" stroke="black" points="239.5,-667.57 236,-657.57 232.5,-667.57 239.5,-667.57"/>
+</g>
+<!-- RecData -->
+<g id="node11" class="node">
+<title>RecData</title>
+<polygon fill="none" stroke="black" stroke-dasharray="5,2" points="350.61,-599.05 263.39,-599.05 263.39,-569.45 350.61,-569.45 350.61,-599.05"/>
+<text xml:space="preserve" text-anchor="middle" x="307" y="-586.95" font-family="Times,serif" font-size="9.00">Extracted Recovery</text>
+<text xml:space="preserve" text-anchor="middle" x="307" y="-576.15" font-family="Times,serif" font-size="9.00">(20 bits)</text>
+</g>
+<!-- Parse&#45;&gt;RecData -->
+<g id="edge10" class="edge">
+<title>Parse-&gt;RecData</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M279.61,-697C297.85,-697 314.9,-697 314.9,-697 314.9,-697 314.9,-610.97 314.9,-610.97"/>
+<polygon fill="black" stroke="black" points="318.4,-610.97 314.9,-600.97 311.4,-610.97 318.4,-610.97"/>
+</g>
+<!-- Aext&#45;&gt;Comp -->
+<g id="edge12" class="edge">
+<title>Aext-&gt;Comp</title>
+<path fill="none" stroke="black" d="M229.3,-625.65C229.3,-625.65 229.3,-543.86 229.3,-543.86"/>
+<polygon fill="black" stroke="black" points="232.8,-543.86 229.3,-533.86 225.8,-543.86 232.8,-543.86"/>
+</g>
+<!-- L1 -->
+<g id="node20" class="node">
+<title>L1</title>
+<polygon fill="white" stroke="black" points="242.11,-206.45 139.89,-206.45 139.89,-166.05 242.11,-166.05 242.11,-206.45"/>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-194.35" font-family="Times,serif" font-size="9.00">Level 1: Retrieve 20-bit</text>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-183.55" font-family="Times,serif" font-size="9.00">Partner Data &amp;</text>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-172.75" font-family="Times,serif" font-size="9.00">De-quantize Averages</text>
+</g>
+<!-- RecData&#45;&gt;L1 -->
+<g id="edge22" class="edge">
+<title>RecData-&gt;L1</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M306.54,-569.23C306.54,-501.05 306.54,-224 306.54,-224 306.54,-224 208.04,-224 208.04,-224 208.04,-224 208.04,-218.41 208.04,-218.41"/>
+<polygon fill="black" stroke="black" points="211.54,-218.41 208.04,-208.41 204.54,-218.41 211.54,-218.41"/>
+<text xml:space="preserve" text-anchor="end" x="302" y="-350" font-family="Times,serif" font-size="8.00">Backup Data</text>
+</g>
+<!-- Valid -->
+<g id="node13" class="node">
+<title>Valid</title>
+<polygon fill="white" stroke="black" points="133.6,-463.65 54.4,-463.65 54.4,-434.05 133.6,-434.05 133.6,-463.65"/>
+<text xml:space="preserve" text-anchor="middle" x="94" y="-451.55" font-family="Times,serif" font-size="9.00">Block Valid</text>
+<text xml:space="preserve" text-anchor="middle" x="94" y="-440.75" font-family="Times,serif" font-size="9.00">(Unmodified)</text>
+</g>
+<!-- Comp&#45;&gt;Valid -->
+<g id="edge14" class="edge">
+<title>Comp-&gt;Valid</title>
+<path fill="none" stroke="black" d="M123.16,-517.76C123.16,-517.76 123.16,-475.37 123.16,-475.37"/>
+<polygon fill="black" stroke="black" points="126.66,-475.37 123.16,-465.37 119.66,-475.37 126.66,-475.37"/>
+<text xml:space="preserve" text-anchor="middle" x="131.22" y="-479.05" font-family="Times,serif" font-size="8.00"> Yes</text>
+</g>
+<!-- Tamper -->
+<g id="node14" class="node">
+<title>Tamper</title>
+<polygon fill="white" stroke="black" points="230.6,-461.45 151.4,-461.45 151.4,-436.25 230.6,-436.25 230.6,-461.45"/>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-446.15" font-family="Times,serif" font-size="9.00">Block Tampered</text>
+</g>
+<!-- Comp&#45;&gt;Tamper -->
+<g id="edge13" class="edge">
+<title>Comp-&gt;Tamper</title>
+<path fill="none" stroke="black" d="M191,-498.86C191,-498.86 191,-473.44 191,-473.44"/>
+<polygon fill="black" stroke="black" points="194.5,-473.44 191,-463.44 187.5,-473.44 194.5,-473.44"/>
+<text xml:space="preserve" text-anchor="middle" x="196.89" y="-479.05" font-family="Times,serif" font-size="8.00"> No</text>
+</g>
+<!-- Merge -->
+<g id="node23" class="node">
+<title>Merge</title>
+<polygon fill="white" stroke="black" points="241.4,-82.45 140.6,-82.45 140.6,-52.85 241.4,-52.85 241.4,-82.45"/>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-70.35" font-family="Times,serif" font-size="9.00">Merge Blocks &amp;</text>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-59.55" font-family="Times,serif" font-size="9.00">Reconstruct Channels</text>
+</g>
+<!-- Valid&#45;&gt;Merge -->
+<g id="edge25" class="edge">
+<title>Valid-&gt;Merge</title>
+<path fill="none" stroke="black" d="M84,-433.92C84,-363.51 84,-68 84,-68 84,-68 128.81,-68 128.81,-68"/>
+<polygon fill="black" stroke="black" points="128.81,-71.5 138.81,-68 128.81,-64.5 128.81,-71.5"/>
+<text xml:space="preserve" text-anchor="middle" x="28.88" y="-261.25" font-family="Times,serif" font-size="8.00"> Bypass Recovery</text>
+</g>
+<!-- Map -->
+<g id="node16" class="node">
+<title>Map</title>
+<polygon fill="white" stroke="black" points="245.98,-396.25 136.02,-396.25 136.02,-371.05 245.98,-371.05 245.98,-396.25"/>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-380.95" font-family="Times,serif" font-size="9.00">Tamper Localization Map</text>
+</g>
+<!-- Tamper&#45;&gt;Map -->
+<g id="edge15" class="edge">
+<title>Tamper-&gt;Map</title>
+<path fill="none" stroke="black" d="M191,-435.97C191,-435.97 191,-408.02 191,-408.02"/>
+<polygon fill="black" stroke="black" points="194.5,-408.02 191,-398.02 187.5,-408.02 194.5,-408.02"/>
+</g>
+<!-- Key -->
+<g id="node15" class="node">
+<title>Key</title>
+<polygon fill="white" stroke="black" points="411.6,-461.45 358.2,-461.45 358.2,-436.25 415.8,-436.25 415.8,-457.25 411.6,-461.45"/>
+<polyline fill="none" stroke="black" points="411.6,-461.45 411.6,-457.25"/>
+<polyline fill="none" stroke="black" points="415.8,-457.25 411.6,-457.25"/>
+<text xml:space="preserve" text-anchor="middle" x="387" y="-446.15" font-family="Times,serif" font-size="9.00">Secret Key</text>
+</g>
+<!-- SCBM -->
+<g id="node17" class="node">
+<title>SCBM</title>
+<polygon fill="white" stroke="black" points="430.2,-398.45 343.8,-398.45 343.8,-368.85 430.2,-368.85 430.2,-398.45"/>
+<text xml:space="preserve" text-anchor="middle" x="387" y="-380.95" font-family="Times,serif" font-size="9.00">SCBM Strategy</text>
+</g>
+<!-- Key&#45;&gt;SCBM -->
+<g id="edge16" class="edge">
+<title>Key-&gt;SCBM</title>
+<path fill="none" stroke="black" d="M387,-435.97C387,-435.97 387,-410.31 387,-410.31"/>
+<polygon fill="black" stroke="black" points="390.5,-410.31 387,-400.31 383.5,-410.31 390.5,-410.31"/>
+<text xml:space="preserve" text-anchor="middle" x="395.78" y="-413.85" font-family="Times,serif" font-size="8.00"> Seed</text>
+</g>
+<!-- Partner -->
+<g id="node18" class="node">
+<title>Partner</title>
+<polygon fill="white" stroke="black" points="241.4,-341.85 140.6,-341.85 140.6,-312.25 241.4,-312.25 241.4,-341.85"/>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-329.75" font-family="Times,serif" font-size="9.00">Identify Partner</text>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-318.95" font-family="Times,serif" font-size="9.00">Block (P_idx)</text>
+</g>
+<!-- Map&#45;&gt;Partner -->
+<g id="edge18" class="edge">
+<title>Map-&gt;Partner</title>
+<path fill="none" stroke="black" d="M191,-370.81C191,-370.81 191,-353.77 191,-353.77"/>
+<polygon fill="black" stroke="black" points="194.5,-353 roughly.77 191,-343.77 187.5,-353.77 194.5,-353.77"/>
+</g>
+<!-- SCBM&#45;&gt;Partner -->
+<g id="edge17" class="edge">
+<title>SCBM-&gt;Partner</title>
+<path fill="none" stroke="black" d="M352.6,-368.47C352.6,-351.69 352.6,-327 352.6,-327 352.6,-327 253.2,-327 253.2,-327"/>
+<polygon fill="black" stroke="black" points="253.2,-323.5 243.2,-327 253.2,-330.5 253.2,-323.5"/>
+</g>
+<!-- PartnerCheck -->
+<g id="node19" class="node">
+<title>PartnerCheck</title>
+<polygon fill="white" stroke="black" points="191,-285.25 113.6,-263.65 191,-242.05 268.4,-263.65 191,-285.25"/>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-266.35" font-family="Times,serif" font-size="9.00">Is Partner</text>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-255.55" font-family="Times,serif" font-size="9.00">P_idx Tampered?</text>
+</g>
+<!-- Partner&#45;&gt;PartnerCheck -->
+<g id="edge19" class="edge">
+<title>Partner-&gt;PartnerCheck</title>
+<path fill="none" stroke="black" d="M191,-312.03C191,-312.03 191,-297.04 191,-297.04"/>
+<polygon fill="black" stroke="black" points="194.5,-297.04 191,-287.04 187.5,-297.04 194.5,-297.04"/>
+</g>
+<!-- PartnerCheck&#45;&gt;L1 -->
+<g id="edge20" class="edge">
+<title>PartnerCheck-&gt;L1</title>
+<path fill="none" stroke="black" d="M173.96,-246.47C173.96,-246.47 173.96,-218.19 173.96,-218.19"/>
+<polygon fill="black" stroke="black" points="177.46,-218.19 173.96,-208.19 170.46,-218.19 177.46,-218.19"/>
+<text xml:space="preserve" text-anchor="end" x="168" y="-221.85" font-family="Times,serif" font-size="8.00">No (Safe)</text>
+</g>
+<!-- L2 -->
+<g id="node21" class="node">
+<title>L2</title>
+<polygon fill="white" stroke="black" points="361.4,-201.05 260.6,-201.05 260.6,-171.45 361.4,-171.45 361.4,-201.05"/>
+<text xml:space="preserve" text-anchor="middle" x="311" y="-188.95" font-family="Times,serif" font-size="9.00">Level 2: Inpainting /</text>
+<text xml:space="preserve" text-anchor="middle" x="311" y="-178.15" font-family="Times,serif" font-size="9.00">Neighborhood Mean</text>
+</g>
+<!-- PartnerCheck&#45;&gt;L2 -->
+<g id="edge21" class="edge">
+<title>PartnerCheck-&gt;L2</title>
+<path fill="none" stroke="black" d="M264.5,-262.31C264.5,-262.31 264.5,-212.99 264.5,-212.99"/>
+<polygon fill="black" stroke="black" points="268,-212.99 264.5,-202.99 261,-212.99 268,-212.99"/>
+<text xml:space="preserve" text-anchor="end" x="258" y="-236.85" font-family="Times,serif" font-size="8.00">Yes (Tampered)</text>
+</g>
+<!-- Restore -->
+<g id="node22" class="node">
+<title>Restore</title>
+<polygon fill="white" stroke="black" points="241.4,-139.05 140.6,-139.05 140.6,-109.45 241.4,-109.45 241.4,-139.05"/>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-126.95" font-family="Times,serif" font-size="9.00">Hybrid Restoration &amp;</text>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-116.15" font-family="Times,serif" font-size="9.00">Seam Blending</text>
+</g>
+<!-- L1&#45;&gt;Restore -->
+<g id="edge23" class="edge">
+<title>L1-&gt;Restore</title>
+<path fill="none" stroke="black" d="M191,-165.6C191,-165.6 191,-150.83 191,-150.83"/>
+<polygon fill="black" stroke="black" points="194.5,-150.83 191,-140.83 187.5,-150.83 194.5,-150.83"/>
+</g>
+<!-- L2&#45;&gt;Restore -->
+<g id="edge24" class="edge">
+<title>L2-&gt;Restore</title>
+<path fill="none" stroke="black" d="M311,-171.18C311,-152.76 311,-124 311,-124 311,-124 253.4,-124 253.4,-124"/>
+<polygon fill="black" stroke="black" points="253.4,-120.5 243.4,-124 253.4,-127.5 253.4,-120.5"/>
+</g>
+<!-- Restore&#45;&gt;Merge -->
+<g id="edge26" class="edge">
+<title>Restore-&gt;Merge</title>
+<path fill="none" stroke="black" d="M191,-109.08C191,-109.08 191,-94.37 191,-94.37"/>
+<polygon fill="black" stroke="black" points="194.5,-94.37 191,-84.37 187.5,-94.37 194.5,-94.37"/>
+</g>
+<!-- Output -->
+<g id="node24" class="node">
+<title>Output</title>
+<path fill="white" stroke="black" d="M241.4,-23.5C241.4,-24.8 218.81,-25.85 191,-25.85 163.19,-25.85 140.6,-24.8 140.6,-23.5 140.6,-23.5 140.6,-2.35 140.6,-2.35 140.6,-1.05 163.19,0 191,0 218.81,0 241.4,-1.05 241.4,-2.35 241.4,-2.35 241.4,-23.5 241.4,-23.5"/>
+<path fill="none" stroke="black" d="M241.4,-23.5C241.4,-22.2 218.81,-21.15 191,-21.15 163.19,-21.15 140.6,-22.2 140.6,-23.5"/>
+<text xml:space="preserve" text-anchor="middle" x="191" y="-10.22" font-family="Times,serif" font-size="9.00">Restored Image</text>
+</g>
+<!-- Merge&#45;&gt;Output -->
+<g id="edge27" class="edge">
+<title>Merge-&gt;Output</title>
+<path fill="none" stroke="black" d="M191,-52.41C191,-52.41 191,-37.74 191,-37.74"/>
+<polygon fill="black" stroke="black" points="194.5,-37.74 191,-27.74 187.5,-37.74 194.5,-37.74"/>
+</g>
+</g>
+</svg>

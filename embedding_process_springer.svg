@@ -1,0 +1,276 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="700pt" height="1117pt" viewBox="0.00 0.00 700.00 1117.00">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 1112.8)">
+<title>EmbeddingProcessSpringer</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-1112.8 695.94,-1112.8 695.94,4 -4,4"/>
+
+<!-- Cluster: For each Color Channel -->
+<g id="clust1" class="cluster">
+<title>cluster_Channel</title>
+<polygon fill="none" stroke="#000000" stroke-width="1.0" points="8,-69.4 8,-956 538,-956 538,-69.4 8,-69.4"/>
+<text xml:space="preserve" text-anchor="end" x="340" y="-940" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">For each Color Channel (R, G, B)</text>
+</g>
+
+<!-- Cluster: Pass 1 -->
+<g id="clust2" class="cluster">
+<title>cluster_Pass1</title>
+<polygon fill="none" stroke="#000000" stroke-width="0.8" stroke-dasharray="5,2" points="28,-441 28,-914.8 196,-914.8 196,-441 28,-441"/>
+<text xml:space="preserve" text-anchor="middle" x="112" y="-901.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">Pass 1: Prepare Recovery Data</text>
+</g>
+
+<!-- Cluster: Pass 2 -->
+<g id="clust3" class="cluster">
+<title>cluster_Pass2</title>
+<polygon fill="none" stroke="#000000" stroke-width="0.8" stroke-dasharray="5,2" points="216,-89.4 216,-546.6 490,-546.6 490,-89.4 216,-89.4"/>
+<text xml:space="preserve" text-anchor="middle" x="353" y="-533.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">Pass 2: Embed Data</text>
+</g>
+
+<!-- Node: Original Image (Input) -->
+<g id="node1" class="node">
+<title>InputImage</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M401.31,-1108.8C401.31,-1108.8 338.69,-1108.8 338.69,-1108.8 332.69,-1108.8 326.69,-1102.8 326.69,-1096.8 326.69,-1096.8 326.69,-1082.4 326.69,-1082.4 326.69,-1076.4 332.69,-1070.4 338.69,-1070.4 338.69,-1070.4 401.31,-1070.4 401.31,-1070.4 407.31,-1070.4 413.31,-1076.4 413.31,-1082.4 413.31,-1082.4 413.31,-1096.8 413.31,-1096.8 413.31,-1102.8 407.31,-1108.8 401.31,-1108.8"/>
+<text xml:space="preserve" text-anchor="middle" x="370" y="-1092.6" font-family="Helvetica,sans-Serif" font-size="10.00">Original Image</text>
+<text xml:space="preserve" text-anchor="middle" x="370" y="-1080.6" font-family="Helvetica,sans-Serif" font-size="10.00">(Input)</text>
+</g>
+
+<!-- Node: Watermarked Image (Output) -->
+<g id="node2" class="node">
+<title>OutputImage</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M455.09,-38.4C455.09,-38.4 366.91,-38.4 366.91,-38.4 360.91,-38.4 354.91,-32.4 354.91,-26.4 354.91,-26.4 354.91,-12 354.91,-12 354.91,-6 360.91,0 366.91,0 366.91,0 455.09,0 455.09,0 461.09,0 467.09,-6 467.09,-12 467.09,-12 467.09,-26.4 467.09,-26.4 467.09,-32.4 461.09,-38.4 455.09,-38.4"/>
+<text xml:space="preserve" text-anchor="middle" x="411" y="-22.2" font-family="Helvetica,sans-Serif" font-size="10.00">Watermarked Image</text>
+<text xml:space="preserve" text-anchor="middle" x="411" y="-10.2" font-family="Helvetica,sans-Serif" font-size="10.00">(Output)</text>
+</g>
+
+<!-- Node: Preprocess Image -->
+<g id="node3" class="node">
+<title>Preprocess</title>
+<polygon fill="none" stroke="black" stroke-width="1.0" points="431.1,-1025.4 308.9,-1025.4 308.9,-987 431.1,-987 431.1,-1025.4"/>
+<text xml:space="preserve" text-anchor="middle" x="370" y="-1009.2" font-family="Helvetica,sans-Serif" font-size="10.00">Preprocess Image</text>
+<text xml:space="preserve" text-anchor="middle" x="370" y="-997.2" font-family="Helvetica,sans-Serif" font-size="10.00">(Crop to 4×4 multiples)</text>
+</g>
+
+<!-- Edge: InputImage → Preprocess -->
+<g id="edge1" class="edge">
+<title>InputImage→Preprocess</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M370,-1069.84C370,-1069.84 370,-1037.28 370,-1037.28"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="370,-1027.28 374.5,-1037.28 370,-1031 365.5,-1037.28 370,-1027.28"/>
+</g>
+
+<!-- Node: Generate Smart Mapping -->
+<g id="node4" class="node">
+<title>SmartMapping</title>
+<polygon fill="none" stroke="black" stroke-width="1.0" points="691.94,-876 558.06,-876 558.06,-837.6 691.94,-837.6 691.94,-876"/>
+<text xml:space="preserve" text-anchor="middle" x="625" y="-859.8" font-family="Helvetica,sans-Serif" font-size="10.00">Generate Smart Mapping</text>
+<text xml:space="preserve" text-anchor="middle" x="625" y="-847.8" font-family="Helvetica,sans-Serif" font-size="10.00">(Border-Center Pairing)</text>
+</g>
+
+<!-- Edge: Preprocess → SmartMapping -->
+<g id="edge2" class="edge">
+<title>Preprocess→SmartMapping</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M409.67,-986.48C409.67,-946.58 409.67,-860 409.67,-860 409.67,-860 546.29,-860 546.29,-860"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="556.29,-860 546.29,-864.5 551,-860 546.29,-855.5 556.29,-860"/>
+</g>
+
+<!-- Node: Divide into 4x4 Blocks -->
+<g id="node5" class="node">
+<title>DivideBlocks</title>
+<polygon fill="none" stroke="black" stroke-width="1.0" points="175.71,-874.8 56.29,-874.8 56.29,-838.8 175.71,-838.8 175.71,-874.8"/>
+<text xml:space="preserve" text-anchor="middle" x="116" y="-853.8" font-family="Helvetica,sans-Serif" font-size="10.00">Divide into 4×4 Blocks</text>
+</g>
+
+<!-- Edge: Preprocess → DivideBlocks -->
+<g id="edge16" class="edge">
+<title>Preprocess→DivideBlocks</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M348.57,-986.56C348.57,-943.78 348.57,-846 348.57,-846 348.57,-846 187.66,-846 187.66,-846"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="177.66,-846 187.66,-841.5 182,-846 187.66,-850.5 177.66,-846"/>
+</g>
+
+<!-- Node: Clear 2 LSBs -->
+<g id="node6" class="node">
+<title>ClearLSB</title>
+<polygon fill="none" stroke="black" stroke-width="1.0" points="160.42,-792.6 71.58,-792.6 71.58,-754.2 160.42,-754.2 160.42,-792.6"/>
+<text xml:space="preserve" text-anchor="middle" x="116" y="-776.4" font-family="Helvetica,sans-Serif" font-size="10.00">Clear 2 LSBs</text>
+<text xml:space="preserve" text-anchor="middle" x="116" y="-764.4" font-family="Helvetica,sans-Serif" font-size="10.00">(Block &amp; 0xFC)</text>
+</g>
+
+<!-- Edge: DivideBlocks → ClearLSB -->
+<g id="edge3" class="edge">
+<title>DivideBlocks→ClearLSB</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M116,-838.29C116,-838.29 116,-804.48 116,-804.48"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="116,-794.48 120.5,-804.48 116,-798.5 111.5,-804.48 116,-794.48"/>
+</g>
+
+<!-- Node: Calculate 2x2 Averages -->
+<g id="node7" class="node">
+<title>CalcAvg</title>
+<polygon fill="none" stroke="black" stroke-width="1.0" points="175.61,-709.2 48.39,-709.2 48.39,-670.8 175.61,-670.8 175.61,-709.2"/>
+<text xml:space="preserve" text-anchor="middle" x="112" y="-693" font-family="Helvetica,sans-Serif" font-size="10.00">Calculate 2×2 Averages</text>
+<text xml:space="preserve" text-anchor="middle" x="112" y="-681" font-family="Helvetica,sans-Serif" font-size="10.00">(TL, TR, BL, BR)</text>
+</g>
+
+<!-- Edge: ClearLSB → CalcAvg -->
+<g id="edge4" class="edge">
+<title>ClearLSB→CalcAvg</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M116,-753.64C116,-753.64 116,-721.08 116,-721.08"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="116,-711.08 120.5,-721.08 116,-715.1 111.5,-721.08 116,-711.08"/>
+</g>
+
+<!-- Node: Quantize to 5 bits -->
+<g id="node8" class="node">
+<title>Quantize</title>
+<polygon fill="none" stroke="black" stroke-width="1.0" points="169.71,-616 70.29,-616 70.29,-577.6 169.71,-577.6 169.71,-616"/>
+<text xml:space="preserve" text-anchor="middle" x="120" y="-599.8" font-family="Helvetica,sans-Serif" font-size="10.00">Quantize to 5 bits</text>
+<text xml:space="preserve" text-anchor="middle" x="120" y="-587.8" font-family="Helvetica,sans-Serif" font-size="10.00">(Shift >> 3)</text>
+</g>
+
+<!-- Edge: CalcAvg → Quantize -->
+<g id="edge5" class="edge">
+<title>CalcAvg→Quantize</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M120,-670.23C120,-670.23 120,-628 120,-628"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="120,-618 124.5,-628 120,-622 115.5,-628 120,-618"/>
+</g>
+
+<!-- Node: 20-bit Recovery Payload (data store) -->
+<g id="node9" class="node">
+<title>RecoveryPayload</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M173.81,-509C173.81,-511.65 153.28,-513.8 128,-513.8 102.72,-513.8 82.19,-511.65 82.19,-509 82.19,-509 82.19,-465.8 82.19,-465.8 82.19,-463.15 102.72,-461 128,-461 153.28,-461 173.81,-463.15 173.81,-465.8 173.81,-465.8 173.81,-509 173.81,-509"/>
+<path fill="none" stroke="black" stroke-width="1.0" d="M173.81,-509C173.81,-506.35 153.28,-504.2 128,-504.2 102.72,-504.2 82.19,-506.35 82.19,-509"/>
+<text xml:space="preserve" text-anchor="middle" x="128" y="-490.4" font-family="Helvetica,sans-Serif" font-size="10.00">20-bit Recovery</text>
+<text xml:space="preserve" text-anchor="middle" x="128" y="-478.4" font-family="Helvetica,sans-Serif" font-size="10.00">Payload</text>
+</g>
+
+<!-- Edge: Quantize → RecoveryPayload -->
+<g id="edge6" class="edge">
+<title>Quantize→RecoveryPayload</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M125.95,-577.24C125.95,-577.24 125.95,-525.65 125.95,-525.65"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="125.95,-515.65 130.45,-525.65 125.95,-519.65 121.45,-525.65 125.95,-515.65"/>
+</g>
+
+<!-- Node: Generate Auth Hash -->
+<g id="node10" class="node">
+<title>GenHash</title>
+<polygon fill="none" stroke="black" stroke-width="1.0" points="388.24,-506.6 235.76,-506.6 235.76,-468.2 388.24,-468.2 388.24,-506.6"/>
+<text xml:space="preserve" text-anchor="middle" x="312" y="-490.4" font-family="Helvetica,sans-Serif" font-size="10.00">Generate Auth Hash</text>
+<text xml:space="preserve" text-anchor="middle" x="312" y="-478.4" font-family="Helvetica,sans-Serif" font-size="10.00">(MD5 of Clean Block + Index)</text>
+</g>
+
+<!-- Edge: ClearLSB → GenHash (with "Clean Block" label) -->
+<g id="edge7" class="edge">
+<title>ClearLSB→GenHash</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M160.8,-773C206.99,-773 272.33,-773 272.33,-773 272.33,-773 272.33,-518.49 272.33,-518.49"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="272.33,-508.49 276.83,-518.49 272.33,-512.5 267.83,-518.49 272.33,-508.49"/>
+<!-- White background behind "Clean Block" label, positioned LEFT of the line -->
+<rect x="226" y="-660" width="38" height="14" fill="white" stroke="none"/>
+<text xml:space="preserve" text-anchor="end" x="262" y="-649.5" font-family="Helvetica,sans-Serif" font-size="9.00">Clean Block</text>
+</g>
+
+<!-- Node: 12-bit Auth Hash (data store) -->
+<g id="node11" class="node">
+<title>AuthPayload</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M332.04,-405.65C332.04,-407.47 310.51,-408.95 284,-408.95 257.49,-408.95 235.96,-407.47 235.96,-405.65 235.96,-405.65 235.96,-375.95 235.96,-375.95 235.96,-374.13 257.49,-372.65 284,-372.65 310.51,-372.65 332.04,-374.13 332.04,-375.95 332.04,-375.95 332.04,-405.65 332.04,-405.65"/>
+<path fill="none" stroke="black" stroke-width="1.0" d="M332.04,-405.65C332.04,-403.83 310.51,-402.35 284,-402.35 257.49,-402.35 235.96,-403.83 235.96,-405.65"/>
+<text xml:space="preserve" text-anchor="middle" x="284" y="-387.8" font-family="Helvetica,sans-Serif" font-size="10.00">12-bit Auth Hash</text>
+</g>
+
+<!-- Edge: GenHash → AuthPayload -->
+<g id="edge8" class="edge">
+<title>GenHash→AuthPayload</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M284,-467.85C284,-467.85 284,-420.8 284,-420.8"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="284,-410.8 288.5,-420.8 284,-414.8 279.5,-420.8 284,-410.8"/>
+</g>
+
+<!-- Node: Fetch Partner's Recovery Payload -->
+<g id="node12" class="node">
+<title>FetchPartner</title>
+<polygon fill="none" stroke="black" stroke-width="1.0" points="470.38,-410 367.62,-410 367.62,-371.6 470.38,-371.6 470.38,-410"/>
+<text xml:space="preserve" text-anchor="middle" x="419" y="-393.8" font-family="Helvetica,sans-Serif" font-size="10.00">Fetch Partner&#39;s</text>
+<text xml:space="preserve" text-anchor="middle" x="419" y="-381.8" font-family="Helvetica,sans-Serif" font-size="10.00">Recovery Payload</text>
+</g>
+
+<!-- Edge: SmartMapping → FetchPartner (with "Partner Index" label) -->
+<g id="edge15" class="edge">
+<title>SmartMapping→FetchPartner</title>
+<path fill="none" stroke="black" stroke-width="1.0" stroke-dasharray="1,5" d="M557.62,-853C508.59,-853 450.74,-853 450.74,-853 450.74,-853 450.74,-421.83 450.74,-421.83"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="450.74,-411.83 455.24,-421.83 450.74,-415.83 446.24,-421.83 450.74,-411.83"/>
+<!-- White background behind "Partner Index" label, positioned RIGHT of the line -->
+<rect x="458" y="-660" width="62" height="14" fill="white" stroke="none"/>
+<text xml:space="preserve" text-anchor="start" x="460" y="-649.5" font-family="Helvetica,sans-Serif" font-size="9.00">Partner Index</text>
+</g>
+
+<!-- Edge: RecoveryPayload → FetchPartner -->
+<g id="edge9" class="edge">
+<title>RecoveryPayload→FetchPartner</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M174.13,-465C246.35,-465 377.93,-465 377.93,-465 377.93,-465 377.93,-421.76 377.93,-421.76"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="377.93,-411.76 382.43,-421.76 377.93,-415.76 373.43,-421.76 377.93,-411.76"/>
+</g>
+
+<!-- Node: Concatenate Payloads -->
+<g id="node13" class="node">
+<title>Concat</title>
+<polygon fill="none" stroke="black" stroke-width="1.0" points="466.11,-326.6 343.89,-326.6 343.89,-290.6 466.11,-290.6 466.11,-326.6"/>
+<text xml:space="preserve" text-anchor="middle" x="405" y="-305.6" font-family="Helvetica,sans-Serif" font-size="10.00">Concatenate Payloads</text>
+</g>
+
+<!-- Edge: FetchPartner → Concat -->
+<g id="edge10" class="edge">
+<title>FetchPartner→Concat</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M416.87,-371.32C416.87,-371.32 416.87,-338.56 416.87,-338.56"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="416.87,-328.56 421.37,-338.56 416.87,-332.56 412.37,-338.56 416.87,-328.56"/>
+</g>
+
+<!-- Edge: AuthPayload → Concat -->
+<g id="edge11" class="edge">
+<title>AuthPayload→Concat</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M332.26,-391C345.24,-391 355.76,-391 355.76,-391 355.76,-391 355.76,-338.35 355.76,-338.35"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="355.76,-328.35 360.26,-338.35 355.76,-332.35 351.26,-338.35 355.76,-328.35"/>
+</g>
+
+<!-- Node: 32-bit Full Payload (data store) -->
+<g id="node14" class="node">
+<title>FullPayload</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M470.13,-240.8C470.13,-243.45 440.94,-245.6 405,-245.6 369.06,-245.6 339.87,-243.45 339.87,-240.8 339.87,-240.8 339.87,-197.6 339.87,-197.6 339.87,-194.95 369.06,-192.8 405,-192.8 440.94,-192.8 470.13,-194.95 470.13,-197.6 470.13,-197.6 470.13,-240.8 470.13,-240.8"/>
+<path fill="none" stroke="black" stroke-width="1.0" d="M470.13,-240.8C470.13,-238.15 440.94,-236 405,-236 369.06,-236 339.87,-238.15 339.87,-240.8"/>
+<text xml:space="preserve" text-anchor="middle" x="405" y="-222.2" font-family="Helvetica,sans-Serif" font-size="10.00">32-bit Full Payload</text>
+<text xml:space="preserve" text-anchor="middle" x="405" y="-210.2" font-family="Helvetica,sans-Serif" font-size="10.00">(12 Auth + 20 Recovery)</text>
+</g>
+
+<!-- Edge: Concat → FullPayload -->
+<g id="edge12" class="edge">
+<title>Concat→FullPayload</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M405,-290.08C405,-290.08 405,-257.64 405,-257.64"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="405,-247.64 409.5,-257.64 405,-251.64 400.5,-257.64 405,-247.64"/>
+</g>
+
+<!-- Node: Embed into 2 LSBs -->
+<g id="node15" class="node">
+<title>Embed</title>
+<polygon fill="none" stroke="black" stroke-width="1.0" points="464.6,-147.8 357.4,-147.8 357.4,-109.4 464.6,-109.4 464.6,-147.8"/>
+<text xml:space="preserve" text-anchor="middle" x="411" y="-131.6" font-family="Helvetica,sans-Serif" font-size="10.00">Embed into 2 LSBs</text>
+<text xml:space="preserve" text-anchor="middle" x="411" y="-119.6" font-family="Helvetica,sans-Serif" font-size="10.00">(Across 16 pixels)</text>
+</g>
+
+<!-- Edge: FullPayload → Embed -->
+<g id="edge13" class="edge">
+<title>FullPayload→Embed</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M411,-192.51C411,-192.51 411,-159.67 411,-159.67"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="411,-149.67 415.5,-159.67 411,-153.67 406.5,-159.67 411,-149.67"/>
+</g>
+
+<!-- Edge: DivideBlocks → Embed (with "Original Block" label) -->
+<g id="edge14" class="edge">
+<title>DivideBlocks→Embed</title>
+<path fill="none" stroke="black" stroke-width="1.0" stroke-dasharray="1,5" d="M175.85,-868C192.31,-868 205.73,-868 205.73,-868 205.73,-868 205.73,-129 205.73,-129 205.73,-129 345.58,-129 345.58,-129"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="355.58,-129 345.58,-133.5 350,-129 345.58,-124.5 355.58,-129"/>
+<!-- "Original Block" label, positioned LEFT of the vertical dashed line at x=205 -->
+<rect x="139" y="-310" width="62" height="14" fill="white" stroke="none"/>
+<text xml:space="preserve" text-anchor="end" x="199" y="-300" font-family="Helvetica,sans-Serif" font-size="9.00">Original Block</text>
+</g>
+
+<!-- Edge: Embed → OutputImage -->
+<g id="edge17" class="edge">
+<title>Embed→OutputImage</title>
+<path fill="none" stroke="black" stroke-width="1.0" d="M411,-109.04C411,-109.04 411,-50.42 411,-50.42"/>
+<polygon fill="black" stroke="black" stroke-width="1.0" points="411,-40.42 415.5,-50.42 411,-44.42 406.5,-50.42 411,-40.42"/>
+</g>
+
+</g>
+</svg>

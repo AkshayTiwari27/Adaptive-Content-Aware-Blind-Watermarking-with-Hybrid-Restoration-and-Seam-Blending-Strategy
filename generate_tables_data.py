@@ -65,14 +65,15 @@ def main():
     
     files = get_images()
     if not files:
-        print(f"No original images found in {INPUT_DIR}.")
+        print(f"ERROR: No original images found in {INPUT_DIR}.")
         return
 
-    # Data structures for our 4 tables
+    # Data structures for our 5 tables
     table1_data = [] # PSNR & SSIM of Watermarked
-    table2_data = [] # Watermark Robustness: NCC (Original WM vs Extracted WM)
-    table3_data = [] # Recovery Quality: PSNR & SSIM
-    table4_data = [] # Computational Time
+    table2_data = [] # NCC of Extracted Watermarks (No Attack)
+    table3_data = [] # Watermark Robustness: NCC (Original WM vs Extracted WM)
+    table4_data = [] # Recovery Quality: PSNR & SSIM
+    table5_data = [] # Computational Time
 
     for file_path in files:
         original_filename = os.path.basename(file_path)
@@ -95,21 +96,26 @@ def main():
         ssim_wm = calculate_ssim(orig_img, wm_img)
         table1_data.append({"Image": base_name, "PSNR (dB)": psnr_wm, "SSIM": ssim_wm})
 
-        # Row dictionaries for Tables 2, 3, 4
-        row_t2 = {"Image": base_name}
+        # --- TABLE 2: NCC of Extracted Watermarks (No Attack) ---
+        ext_wm_no_attack = extract_watermark_layer(wm_img)
+        ncc_no_attack = calculate_ncc(orig_wm_layer, ext_wm_no_attack)
+        table2_data.append({"Image": base_name, "NCC": ncc_no_attack})
+
+        # Row dictionaries for Tables 3, 4, 5
         row_t3 = {"Image": base_name}
         row_t4 = {"Image": base_name}
+        row_t5 = {"Image": base_name}
 
         for atk in ATTACK_TYPES:
             atk_path = os.path.join(MAIN_RESULTS_DIR, atk, "Attacked", png_filename)
             rec_path = os.path.join(MAIN_RESULTS_DIR, atk, "Recovered", png_filename)
             
-            # --- Table 4: Computational Time (and cleanup) ---
+            # --- Table 5: Computational Time (and cleanup) ---
             start_time = time.time()
             if os.path.exists(atk_path):
                 watermark_system.recover(atk_path, "temp_rec.png") 
             end_time = time.time()
-            row_t4[atk] = end_time - start_time
+            row_t5[atk] = end_time - start_time
             
             # Clean up temporary files left behind
             if os.path.exists("temp_rec.png"): 
@@ -121,42 +127,50 @@ def main():
             atk_img = cv2.imread(atk_path, cv2.IMREAD_GRAYSCALE)
             rec_img = cv2.imread(rec_path, cv2.IMREAD_GRAYSCALE)
             
-            # --- Table 2: Watermark Robustness (NCC of Watermarks) ---
+            # --- Table 3: Watermark Robustness (NCC of Watermarks) ---
             if atk_img is not None:
                 ext_wm_layer = extract_watermark_layer(atk_img)
-                row_t2[atk] = calculate_ncc(orig_wm_layer, ext_wm_layer)
+                row_t3[atk] = calculate_ncc(orig_wm_layer, ext_wm_layer)
             else:
-                row_t2[atk] = np.nan
+                row_t3[atk] = np.nan
 
-            # --- Table 3: Recovery Quality (PSNR, SSIM) ---
+            # --- Table 4: Recovery Quality (PSNR, SSIM) ---
             if rec_img is not None:
-                row_t3[f"{atk}_PSNR"] = calculate_psnr(orig_img, rec_img)
-                row_t3[f"{atk}_SSIM"] = calculate_ssim(orig_img, rec_img)
+                row_t4[f"{atk}_PSNR"] = calculate_psnr(orig_img, rec_img)
+                row_t4[f"{atk}_SSIM"] = calculate_ssim(orig_img, rec_img)
             else:
-                row_t3[f"{atk}_PSNR"] = np.nan
-                row_t3[f"{atk}_SSIM"] = np.nan
+                row_t4[f"{atk}_PSNR"] = np.nan
+                row_t4[f"{atk}_SSIM"] = np.nan
 
-        table2_data.append(row_t2)
         table3_data.append(row_t3)
         table4_data.append(row_t4)
+        table5_data.append(row_t5)
+
+    # Safety check: ensure we actually processed images before trying to build tables
+    if not table1_data:
+        print("\nERROR: No processed images were found!")
+        print("Please run 'python batch_test.py' first to generate the watermarked images.")
+        return
 
     # Convert to DataFrames
     df1 = pd.DataFrame(table1_data)
     df2 = pd.DataFrame(table2_data)
     df3 = pd.DataFrame(table3_data)
     df4 = pd.DataFrame(table4_data)
+    df5 = pd.DataFrame(table5_data)
 
-    # Column ordering for Table 3 (grouped by attack)
-    t3_cols = ["Image"]
+    # Column ordering for Table 4 (grouped by attack)
+    t4_cols = ["Image"]
     for atk in ATTACK_TYPES:
-        t3_cols.extend([f"{atk}_PSNR", f"{atk}_SSIM"])
-    df3 = df3[t3_cols]
+        t4_cols.extend([f"{atk}_PSNR", f"{atk}_SSIM"])
+    df4 = df4[t4_cols]
 
     # --- Apply Formatting and Add AVERAGES ---
     df1 = add_average_row(df1, {"PSNR (dB)": 2, "SSIM": 4})
-    df2 = add_average_row(df2, {atk: 4 for atk in ATTACK_TYPES})
-    df3 = add_average_row(df3, {col: (2 if "PSNR" in col else 4) for col in t3_cols if col != "Image"})
-    df4 = add_average_row(df4, {atk: 3 for atk in ATTACK_TYPES})
+    df2 = add_average_row(df2, {"NCC": 5}) 
+    df3 = add_average_row(df3, {atk: 4 for atk in ATTACK_TYPES})
+    df4 = add_average_row(df4, {col: (2 if "PSNR" in col else 4) for col in t4_cols if col != "Image"})
+    df5 = add_average_row(df5, {atk: 3 for atk in ATTACK_TYPES})
 
     # --- Print and Save ---
     print("\n" + "="*60)
@@ -165,25 +179,31 @@ def main():
     print(df1.to_string(index=False))
     df1.to_csv(os.path.join(MAIN_RESULTS_DIR, "Table_1_Watermarked_Quality.csv"), index=False)
 
-    print("\n" + "="*80)
-    print("Table 2: Watermark Robustness: NCC (Original WM vs Extracted WM)")
-    print("="*80)
+    print("\n" + "="*60)
+    print("Table 2: NCC of Extracted Watermarks (No Attack)")
+    print("="*60)
     print(df2.to_string(index=False))
-    df2.to_csv(os.path.join(MAIN_RESULTS_DIR, "Table_2_Watermark_Robustness_NCC.csv"), index=False)
+    df2.to_csv(os.path.join(MAIN_RESULTS_DIR, "Table_2_NCC_No_Attack.csv"), index=False)
+
+    print("\n" + "="*80)
+    print("Table 3: Watermark Robustness: NCC (Original WM vs Extracted WM)")
+    print("="*80)
+    print(df3.to_string(index=False))
+    df3.to_csv(os.path.join(MAIN_RESULTS_DIR, "Table_3_Watermark_Robustness_NCC.csv"), index=False)
 
     print("\n" + "="*120)
-    print("Table 3: Quantitative Evaluation: Recovered PSNR (dB) and SSIM Under Different Attacks")
+    print("Table 4: Quantitative Evaluation: Recovered PSNR (dB) and SSIM Under Different Attacks")
     print("="*120)
-    print(df3.to_string(index=False))
-    df3.to_csv(os.path.join(MAIN_RESULTS_DIR, "Table_3_Recovery_PSNR_SSIM.csv"), index=False)
+    print(df4.to_string(index=False))
+    df4.to_csv(os.path.join(MAIN_RESULTS_DIR, "Table_4_Recovery_PSNR_SSIM.csv"), index=False)
 
     print("\n" + "="*80)
-    print("Table 4: Computational Efficiency (Seconds)")
+    print("Table 5: Computational Efficiency (Seconds)")
     print("="*80)
-    print(df4.to_string(index=False))
-    df4.to_csv(os.path.join(MAIN_RESULTS_DIR, "Table_4_Computational_Time.csv"), index=False)
+    print(df5.to_string(index=False))
+    df5.to_csv(os.path.join(MAIN_RESULTS_DIR, "Table_5_Computational_Time.csv"), index=False)
     
-    print(f"\nAll 4 tables have been saved as CSV files in the '{MAIN_RESULTS_DIR}' directory.")
+    print(f"\nAll 5 tables have been saved as CSV files in the '{MAIN_RESULTS_DIR}' directory.")
 
 if __name__ == "__main__":
     main()

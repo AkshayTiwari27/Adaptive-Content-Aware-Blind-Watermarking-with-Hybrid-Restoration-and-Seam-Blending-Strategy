@@ -1,5 +1,5 @@
 Image Name,Attack Type,Status,PSNR (dB)
-Boat.png,content_removal,Success,41.64
+Boat.png,content_removal,Success,41.79
 Boat.png,copy_move,Success,43.22
 Boat.png,splicing,Success,42.76
 Boat.png,cropping,Success,36.13
@@ -9,7 +9,7 @@ Chemicalplant.png,content_removal,Success,42.64
 Chemicalplant.png,copy_move,Success,41.83
 Chemicalplant.png,splicing,Success,37.58
 Chemicalplant.png,cropping,Success,34.55
-Chemicalplant.png,jpeg_compression,Success,38.27
+Chemicalplant.png,jpeg_compression,Success,38.30
 Chemicalplant.png,noise,Success,41.55
 Clock.png,content_removal,Success,43.50
 Clock.png,copy_move,Success,43.98
@@ -23,25 +23,25 @@ Houses.png,splicing,Success,39.07
 Houses.png,cropping,Success,38.07
 Houses.png,jpeg_compression,Success,40.58
 Houses.png,noise,Success,42.73
-JetPlane.png,content_removal,Success,41.96
+JetPlane.png,content_removal,Success,42.10
 JetPlane.png,copy_move,Success,43.68
 JetPlane.png,splicing,Success,43.32
 JetPlane.png,cropping,Success,38.11
 JetPlane.png,jpeg_compression,Success,40.78
 JetPlane.png,noise,Success,43.12
-Lake.png,content_removal,Success,42.08
+Lake.png,content_removal,Success,42.25
 Lake.png,copy_move,Success,42.56
 Lake.png,splicing,Success,41.50
 Lake.png,cropping,Success,35.13
 Lake.png,jpeg_compression,Success,37.17
 Lake.png,noise,Success,41.94
-Mandril.png,content_removal,Success,42.43
+Mandril.png,content_removal,Success,42.57
 Mandril.png,copy_move,Success,41.18
 Mandril.png,splicing,Success,40.03
 Mandril.png,cropping,Success,33.31
-Mandril.png,jpeg_compression,Success,36.40
+Mandril.png,jpeg_compression,Success,36.41
 Mandril.png,noise,Success,40.65
-Peppers.png,content_removal,Success,42.23
+Peppers.png,content_removal,Success,42.35
 Peppers.png,copy_move,Success,43.10
 Peppers.png,splicing,Success,42.34
 Peppers.png,cropping,Success,36.72
