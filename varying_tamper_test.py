@@ -27,8 +27,11 @@ def setup_directories():
 def calculate_psnr(img1, img2):
     if img1 is None or img2 is None: return 0
     if img1.shape != img2.shape: img2 = cv2.resize(img2, (img1.shape[1], img1.shape[0]))
-    mse = np.mean((img1 - img2) ** 2)
-    if mse == 0: return 100
+    
+    # FIXED: Cast to float64 to prevent uint8 integer overflow/underflow
+    mse = np.mean((img1.astype(np.float64) - img2.astype(np.float64)) ** 2)
+    
+    if mse == 0: return 100.0
     return 20 * math.log10(255.0 / math.sqrt(mse))
 
 def get_attack_dimensions(rows, cols, percent):
@@ -83,7 +86,12 @@ def run_varying_tamper_test():
         print(f"\nProcessing Image: {png_filename}")
         
         results[png_filename] = {atk: {} for atk in ATTACKS}
-        original_img = cv2.imread(file_path)
+        
+        # FIXED: Load original image in grayscale to match the batch_test.py evaluation
+        original_img = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
+        
+        # We still need a color version to pass to the embedder if my_custom_method expects color
+        color_orig_img = cv2.imread(file_path)
         
         wm_save_path = os.path.join(RESULTS_DIR, "0_Watermarked", png_filename)
         if not watermark_system.embed(file_path, wm_save_path):
@@ -108,7 +116,9 @@ def run_varying_tamper_test():
                 rec_save_path = os.path.join(RESULTS_DIR, f"{atk}_{pct}pct", "Recovered", png_filename)
                 watermark_system.recover(atk_save_path, rec_save_path)
 
-                rec_img = cv2.imread(rec_save_path)
+                # FIXED: Load recovered image in grayscale to match the batch_test.py evaluation
+                rec_img = cv2.imread(rec_save_path, cv2.IMREAD_GRAYSCALE)
+                
                 psnr = calculate_psnr(original_img, rec_img)
                 results[png_filename][atk][pct] = psnr
                 

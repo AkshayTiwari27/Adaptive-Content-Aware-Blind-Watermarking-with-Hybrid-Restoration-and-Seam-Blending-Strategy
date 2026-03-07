@@ -1,0 +1,64 @@
+digraph SimplifiedTamperRecovery {
+    // Layout optimized for Springer TWO-COLUMN width (~3.3 inches)
+    rankdir=TB;
+    nodesep=0.1;  // Ultra-tight horizontal spacing
+    ranksep=0.25; // Tighter vertical spacing
+    splines=ortho;
+
+    // Reduced font sizes (8.5 for nodes, 7.5 for edges) to allow narrower boxes
+    node [shape=box, fontname="Times-Roman", fontsize=8.5, style=solid, height=0.35, penwidth=1.0];
+    edge [fontname="Times-Roman", fontsize=7.5, penwidth=0.8];
+
+    // --- Inputs ---
+    Input [label="Watermarked Image\n(Possibly Tampered)", shape=cylinder, width=1.5];
+    
+    // --- Phase 1: Verification ---
+    Split [label="Channel Separation\n& Block Division", width=1.6];
+    Verify [label="Block Extraction\n& Authentication", width=1.6];
+    
+    // Narrowed diamond and side block
+    ValidCheck [label="Tampered?", shape=diamond, width=0.9, height=0.45];
+    ValidBlocks [label="Valid Blocks\n(Bypass)", width=0.85];
+
+    // --- Phase 2: Classification ---
+    Metrics [label="Global Attack Classification\n(Tamper Rate & Noise)", width=1.9];
+
+    // --- Phase 3: Restoration Branches ---
+    // Squeezed to 0.75 width to guarantee the 3-way split fits
+    BranchJPEG [label="Branch A:\nJPEG Bypass", width=0.75];
+    BranchNoise [label="Branch B:\nNoise Repair", width=0.75];
+    BranchStruct [label="Branch C:\nSCBM Backup", width=0.75];
+
+    // --- Phase 4: Output ---
+    PostProcess [label="Merge Channels & Post-Process\n(Inpainting & Blending)", width=2.0];
+    OutputImg [label="Restored Image\n& Tamper Map", shape=cylinder, width=1.5];
+
+    // --- Alignments ---
+    { rank=same; ValidCheck; ValidBlocks; }
+    { rank=same; BranchJPEG; BranchNoise; BranchStruct; }
+
+    // --- Main Flow ---
+    Input -> Split;
+    Split -> Verify;
+    Verify -> ValidCheck;
+
+    // Decision Logic
+    ValidCheck -> ValidBlocks [label=" No"];
+    ValidCheck -> Metrics [label=" Yes", weight=10]; 
+
+    // 3-Way Routing
+    Metrics -> BranchJPEG [label=" >85%\n Tamper", headport=n];
+    Metrics -> BranchNoise [label=" >0.5%\n Noise", weight=10, headport=n];
+    Metrics -> BranchStruct [label=" Localized/\n Blackout", headport=n];
+
+    // Converging for Post-Processing
+    BranchJPEG -> PostProcess [headport=n];
+    BranchNoise -> PostProcess [weight=10, headport=n];
+    BranchStruct -> PostProcess [headport=n];
+    
+    // CRITICAL FIX: 'headport=e' forces the dashed line to enter the right side 
+    // of PostProcess, pulling it inward instead of bowing out into the margin.
+    ValidBlocks -> PostProcess [style=dashed, headport=e];
+
+    PostProcess -> OutputImg [weight=10];
+}

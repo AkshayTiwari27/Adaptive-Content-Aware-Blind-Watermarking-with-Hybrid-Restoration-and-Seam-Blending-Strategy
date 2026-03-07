@@ -187,7 +187,7 @@ def recover(image_path, output_path):
         noise_ratio = extreme_pixels / (h * w)
         
         # 3-Way Attack Classification
-        is_noise_attack = noise_ratio > 0.015
+        is_noise_attack = noise_ratio > 0.005
         is_jpeg_attack = tamper_rate > 0.85 and not is_noise_attack
 
         # --- PASS 2: Restoration ---

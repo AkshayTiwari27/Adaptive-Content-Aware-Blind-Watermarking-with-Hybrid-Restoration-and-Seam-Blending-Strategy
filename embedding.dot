@@ -1,0 +1,78 @@
+digraph WatermarkEmbedding_Thin {
+    // Layout optimized for Springer single column (max 84mm width)
+    rankdir=TB;
+    nodesep=0.2;  // Extremely tight horizontal spacing
+    ranksep=0.3;  // Tight vertical spacing
+    splines=ortho;
+
+    // Increased height and added margin to prevent subscript collisions
+    node [shape=box, fontname="Times-Roman", fontsize=9, style=solid, height=0.45, width=1.3, margin="0.05,0.05"];
+    edge [fontname="Times-Roman", fontsize=8];
+
+    // --- Global Initialization (Top Center) ---
+    Input [label="Original Image\n(H x W x 3)", shape=cylinder];
+    Split [label="Channel Separation\n(R, G, B)"];
+    
+    // Using HTML labels for subscripts
+    Div [label=<Divide into 4x4<BR/>Blocks (B<SUB>i</SUB>)>];
+
+    // --- Left Lane: Current Block ---
+    Clear1 [label=<Clear 2 LSBs<BR/>(B<SUB>i</SUB> &amp; 0xFC)>];
+    ExtAuth [label=<Extract 6 MSBs<BR/>&amp; Index i>];
+    Hash [label="MD5 Hash\nGeneration"];
+    Auth12 [label="12-bit\nSelf Auth"];
+
+    // --- Right Lane: Mapping & Partner Block ---
+    Key [label="Secret Key", shape=note, width=0.8];
+    Map [label=<SCBM Strategy<BR/>(Find Partner j)>];
+    Fetch [label=<Fetch Partner<BR/>Block (B<SUB>j</SUB>)>];
+    Clear2 [label=<Clear 2 LSBs<BR/>(B<SUB>j</SUB> &amp; 0xFC)>];
+    Avg [label="2x2 Sub-block\nAverages"];
+    Quant [label="Quantize to\n5 bits"];
+    Rec20 [label="20-bit Partner\nRecovery"];
+
+    // --- Assembly & Output (Bottom Center) ---
+    Concat [label="Payload Assembly\n(32 bits)", width=1.6];
+    Embed [label=<2-LSB Substitution<BR/>(into Block B<SUB>i</SUB>)> , width=1.6];
+    Merge [label="Reconstruct\nChannels"];
+    Output [label="Watermarked\nImage", shape=cylinder];
+
+    // --- Edges/Connections ---
+    Input -> Split;
+    Split -> Div;
+
+    // Split to Left and Right Lanes
+    Div -> Clear1;
+    Div -> Map [label=" Index i"];
+    
+    // Key feeds into Map
+    Key -> Map [label=" Seed"];
+
+    // Left Lane Flow
+    Clear1 -> ExtAuth;
+    ExtAuth -> Hash;
+    Hash -> Auth12;
+
+    // Right Lane Flow
+    Map -> Fetch [label=" Index j"];
+    Fetch -> Clear2;
+    Clear2 -> Avg;
+    Avg -> Quant;
+    Quant -> Rec20;
+
+    // Combine at the bottom
+    Auth12 -> Concat;
+    Rec20 -> Concat;
+    
+    // Final Output Flow
+    Concat -> Embed;
+    Embed -> Merge;
+    Merge -> Output;
+
+    // --- Strict Vertical Alignment ---
+    // This forces the two lanes to sit compactly side-by-side
+    { rank=same; Clear1; Key; }
+    { rank=same; ExtAuth; Map; }
+    { rank=same; Hash; Fetch; }
+    { rank=same; Auth12; Clear2; }
+}

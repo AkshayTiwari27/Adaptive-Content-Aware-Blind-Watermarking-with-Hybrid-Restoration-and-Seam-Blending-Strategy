@@ -37,7 +37,10 @@ def setup_directories():
 def calculate_psnr(img1, img2):
     if img1 is None or img2 is None: return 0.0
     if img1.shape != img2.shape: img2 = cv2.resize(img2, (img1.shape[1], img1.shape[0]))
-    mse = np.mean((img1 - img2) ** 2)
+    
+    # FIXED: Cast to float64 to prevent uint8 integer overflow/underflow
+    mse = np.mean((img1.astype(np.float64) - img2.astype(np.float64)) ** 2)
+    
     if mse == 0: return 100.0
     return 20 * math.log10(255.0 / math.sqrt(mse))
 
@@ -45,10 +48,11 @@ def calculate_ssim(img1, img2):
     if img1 is None or img2 is None: return 0.0
     if img1.shape != img2.shape: img2 = cv2.resize(img2, (img1.shape[1], img1.shape[0]))
     
+    # Grayscale SSIM evaluation
     if len(img1.shape) == 3:
         score, _ = compare_ssim(img1, img2, full=True, channel_axis=-1)
     else:
-        score, _ = compare_ssim(img1, img2, full=True)
+        score, _ = compare_ssim(img1, img2, full=True, data_range=255) # Added data_range=255
     return score
 
 def run_robustness_test():
@@ -72,12 +76,17 @@ def run_robustness_test():
         jpeg_results[base_name] = {}
         noise_results[base_name] = {}
         
-        original_img = cv2.imread(file_path)
+        # FIXED: Evaluate against original grayscale
+        original_img_gray = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
+        
+        # Embedder usually requires the original path
         wm_save_path = os.path.join(RESULTS_DIR, "0_Watermarked", png_filename)
         
         if not watermark_system.embed(file_path, wm_save_path):
             continue
-        wm_img = cv2.imread(wm_save_path)
+            
+        # We need the color image for the attackers to process correctly
+        wm_img_color = cv2.imread(wm_save_path)
 
         # ---------------------------------------------------------
         # 1. TABLE 7: JPEG Compression (Q=90 to Q=10)
@@ -85,7 +94,9 @@ def run_robustness_test():
         print("  -> Testing JPEG Compression (Table 7):")
         for q in JPEG_QUALITIES:
             print(f"     -> Q={q} ...", end=" ")
-            attacked_img, _ = attacker.attack_jpeg_compression(wm_img, quality=q)
+            
+            # FIXED: Properly nest attack, save, recover, evaluate inside the loop
+            attacked_img, _ = attacker.attack_jpeg_compression(wm_img_color, quality=q)
             atk_dir = os.path.join(RESULTS_DIR, f"JPEG_Q{q}")
             
             atk_save_path = os.path.join(atk_dir, "Attacked", png_filename)
@@ -94,9 +105,10 @@ def run_robustness_test():
             rec_save_path = os.path.join(atk_dir, "Recovered", png_filename)
             watermark_system.recover(atk_save_path, rec_save_path)
 
-            rec_img = cv2.imread(rec_save_path)
-            psnr = calculate_psnr(original_img, rec_img)
+            # FIXED: Load recovered image in grayscale to evaluate correctly
+            rec_img_gray = cv2.imread(rec_save_path, cv2.IMREAD_GRAYSCALE)
             
+            psnr = calculate_psnr(original_img_gray, rec_img_gray)
             jpeg_results[base_name][q] = psnr
             print(f"PSNR: {psnr:.2f} dB")
 
@@ -107,7 +119,9 @@ def run_robustness_test():
         for d in NOISE_DENSITIES:
             pct = int(d * 100)
             print(f"     -> Density={d} ...", end=" ")
-            attacked_img, _ = attacker.attack_salt_and_pepper(wm_img, amount=d)
+            
+            # FIXED: Properly nest attack, save, recover, evaluate inside the loop
+            attacked_img, _ = attacker.attack_salt_and_pepper(wm_img_color, amount=d)
             atk_dir = os.path.join(RESULTS_DIR, f"Noise_{pct}pct")
             
             atk_save_path = os.path.join(atk_dir, "Attacked", png_filename)
@@ -116,9 +130,11 @@ def run_robustness_test():
             rec_save_path = os.path.join(atk_dir, "Recovered", png_filename)
             watermark_system.recover(atk_save_path, rec_save_path)
 
-            rec_img = cv2.imread(rec_save_path)
-            psnr = calculate_psnr(original_img, rec_img)
-            ssim_val = calculate_ssim(original_img, rec_img)
+            # FIXED: Load recovered image in grayscale to evaluate correctly
+            rec_img_gray = cv2.imread(rec_save_path, cv2.IMREAD_GRAYSCALE)
+            
+            psnr = calculate_psnr(original_img_gray, rec_img_gray)
+            ssim_val = calculate_ssim(original_img_gray, rec_img_gray)
             
             noise_results[base_name][d] = (psnr, ssim_val)
             print(f"PSNR: {psnr:.2f} dB | SSIM: {ssim_val:.4f}")
