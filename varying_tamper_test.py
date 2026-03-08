@@ -49,22 +49,31 @@ def apply_percent_attack(attack_name, image, percent):
         
     w, h = get_attack_dimensions(rows, cols, percent)
     
+    # FIX 1: Align attack dimensions to the 4x4 block grid to prevent partial block shredding
+    w = (w // 4) * 4
+    h = (h // 4) * 4
+    
     if attack_name == "content_removal":
-        x = (cols - w) // 2
-        y = (rows - h) // 2
+        x = ((cols - w) // 2 // 4) * 4
+        y = ((rows - h) // 2 // 4) * 4
         return attacker.attack_content_removal(image, x=x, y=y, w=w, h=h)
         
     elif attack_name == "copy_move":
-        # Explicitly separate source and destination to prevent overlap
-        # Source: Top-Left, Destination: Bottom-Right
+        # FIX 2: Target the Center (matching splicing/removal) to prevent Border+Center "Double Kill"
         src_x, src_y = 0, 0
-        dst_x = cols - w
-        dst_y = rows - h
-        return attacker.attack_copy_move(image, src_x=src_x, src_y=src_y, w=w, h=h, dst_x=dst_x, dst_y=dst_y)
+        dst_x = ((cols - w) // 2 // 4) * 4
+        dst_y = ((rows - h) // 2 // 4) * 4
+        
+        # FIX 3: Explicitly copy the source region to prevent NumPy slice overlapping corruption
+        attacked_image = image.copy()
+        source_region = attacked_image[src_y:src_y+h, src_x:src_x+w].copy() # .copy() is vital here!
+        attacked_image[dst_y:dst_y+h, dst_x:dst_x+w] = source_region
+        
+        return attacked_image, 'Copy-Move'
         
     elif attack_name == "splicing":
-        x = (cols - w) // 2
-        y = (rows - h) // 2
+        x = ((cols - w) // 2 // 4) * 4
+        y = ((rows - h) // 2 // 4) * 4
         return attacker.attack_political_splicing(image, x=x, y=y, w=w, h=h)
 
     return None, None
