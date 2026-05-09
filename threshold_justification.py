@@ -1,0 +1,194 @@
+import cv2
+import numpy as np
+import hashlib
+import os
+import csv
+
+BLOCK_SIZE = 4
+THRESHOLD_PERCENT = 85.0
+
+WATERMARKED_DIR = "varying_tamper_results/0_Watermarked"
+
+JPEG_DIR_TEMPLATE = "robustness_results/JPEG_Q{q}/Attacked"
+JPEG_QUALITIES = [90, 70, 50, 30, 10]
+
+LOCALIZED_DIR_TEMPLATE = "varying_tamper_results/{atk}_{p}pct/Attacked"
+LOCALIZED_ATTACKS = [
+    ("content_removal", "Content Removal"),
+    ("copy_move",       "Copy-Move"),
+    ("splicing",        "Splicing"),
+]
+LOCALIZED_PERCENTAGES = [10, 20, 30, 40, 50]
+
+IMAGE_NAMES = [
+    "Boat.png", "Chemicalplant.png", "Clock.png", "Houses.png",
+    "JetPlane.png", "Lake.png", "Mandril.png", "Peppers.png",
+    "Walter-Cronkite.png",
+]
+
+CSV_OUT = "Table_Threshold_Justification.csv"
+TEX_OUT = "Table_Threshold_Justification.tex"
+
+def get_location_dependent_hash(flat_block, block_index):
+    data = flat_block.tobytes()
+    index_bytes = int(block_index).to_bytes(4, byteorder='big')
+    full_hash = hashlib.md5(data + index_bytes).hexdigest()
+    hash_int = int(full_hash[:3], 16)
+    return f"{hash_int:012b}"
+
+def measure_tamper_rate(attacked_path):
+    """
+    Replicates Pass 1 of my_custom_method.recover:
+        - extract 12-bit auth payload from each block's LSBs
+        - mask to upper 6 bits and recompute the location-dependent hash
+        - count blocks whose recomputed hash != extracted auth
+    The value returned is the per-channel rate averaged over R, G, B.
+    This is the same quantity the classifier compares against tau = 0.85.
+    """
+    img = cv2.imread(attacked_path)
+    if img is None:
+        return None
+
+    h, w, _ = img.shape
+    h = (h // BLOCK_SIZE) * BLOCK_SIZE
+    w = (w // BLOCK_SIZE) * BLOCK_SIZE
+    img = img[:h, :w]
+
+    channel_rates = []
+    for channel_id in range(3):
+        channel = img[:, :, channel_id]
+        idx = 0
+        tamper_count = 0
+        total = (h // BLOCK_SIZE) * (w // BLOCK_SIZE)
+
+        for i in range(0, h, BLOCK_SIZE):
+            for j in range(0, w, BLOCK_SIZE):
+                block = channel[i:i + BLOCK_SIZE, j:j + BLOCK_SIZE]
+                flat = block.flatten()
+
+                payload_bits = []
+                for k in range(16):
+                    val = flat[k]
+                    payload_bits.append(str(val & 1))
+                    payload_bits.append(str((val >> 1) & 1))
+                extracted_auth = "".join(payload_bits[:12])
+
+                clean_block = (block & 0xFC)
+                cal_hash = get_location_dependent_hash(clean_block.flatten(), idx)
+
+                if cal_hash != extracted_auth:
+                    tamper_count += 1
+                idx += 1
+
+        channel_rates.append(100.0 * tamper_count / total)
+
+    return float(np.mean(channel_rates))
+
+def evaluate_condition(label, folder):
+    """Returns (avg_pct, list_of_per_image_pcts) for one experimental cell."""
+    per_image = []
+    for name in IMAGE_NAMES:
+        path = os.path.join(folder, name)
+        if not os.path.isfile(path):
+            print(f"  [WARN] missing: {path}")
+            continue
+        rate = measure_tamper_rate(path)
+        if rate is None:
+            print(f"  [WARN] unreadable: {path}")
+            continue
+        per_image.append(rate)
+        print(f"  {label:30s} | {name:22s}: tau = {rate:5.2f}%")
+    avg = float(np.mean(per_image)) if per_image else 0.0
+    print(f"  {label:30s} | AVERAGE              : tau = {avg:5.2f}%\n")
+    return avg, per_image
+
+def main():
+    print("=" * 72)
+    print(" Threshold Justification: empirical tau on watermarked test set ")
+    print("=" * 72)
+
+    rows = []   
+
+    print("\n--- JPEG Compression (global attack) ---\n")
+    for q in JPEG_QUALITIES:
+        folder = JPEG_DIR_TEMPLATE.format(q=q)
+        cond = f"Q = {q}"
+        avg, per = evaluate_condition(f"JPEG {cond}", folder)
+        rows.append(("JPEG Compression", cond, avg, per))
+
+    print("\n--- Localized Tampering (spatially confined) ---\n")
+    for atk_key, atk_label in LOCALIZED_ATTACKS:
+        for p in LOCALIZED_PERCENTAGES:
+            folder = LOCALIZED_DIR_TEMPLATE.format(atk=atk_key, p=p)
+            cond = f"{p}% area"
+            avg, per = evaluate_condition(f"{atk_label} {cond}", folder)
+            rows.append((atk_label, cond, avg, per))
+
+    print(f"\nWriting {CSV_OUT}")
+    with open(CSV_OUT, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["Attack Category", "Condition",
+                    "Avg Modified Blocks (%)"]
+                   + [n.replace(".png", "") for n in IMAGE_NAMES])
+        for cat, cond, avg, per in rows:
+            row = [cat, cond, f"{avg:.2f}"]
+            row += [f"{v:.2f}" for v in per] + [""] * (len(IMAGE_NAMES) - len(per))
+            w.writerow(row)
+        w.writerow([])
+        w.writerow(["Decision Threshold (tau)", "",
+                    f"{THRESHOLD_PERCENT:.1f}"])
+
+    print(f"Writing {TEX_OUT}")
+    with open(TEX_OUT, "w") as f:
+        f.write("% Auto-generated by threshold_justification.py\n")
+        f.write("% Drop into Section 4.4, after Table tab:avg_noise_jpeg_summary.\n\n")
+        f.write("\\begin{table}[t!]\n")
+        f.write("\\centering\n")
+        f.write("\\caption{Average Percentage of LSB-Modified $4\\times4$ Blocks "
+                "Across Nine USC-SIPI Test Images Under JPEG Compression and "
+                "Localized Tampering, Validating the $\\tau = 85\\%$ "
+                "Decision Threshold}\n")
+        f.write("\\label{tab:lsb_threshold}\n")
+        f.write("\\setlength{\\tabcolsep}{5pt}\n")
+        f.write("\\small\n")
+        f.write("\\begin{tabular}{llc}\n")
+        f.write("\\toprule\n")
+        f.write("\\textbf{Attack Category} & \\textbf{Condition} & "
+                "\\textbf{Avg.\\ Modified Blocks (\\%)} \\\\\n")
+        f.write("\\midrule\n")
+
+        jpeg_rows = [r for r in rows if r[0] == "JPEG Compression"]
+        for i, (_, cond, avg, _) in enumerate(jpeg_rows):
+            head = f"\\multirow{ {len(jpeg_rows)}} { *} { JPEG Compression} " if i == 0 else ""
+            f.write(f"{head} & ${cond.replace('Q = ', 'Q = ')}$ & {avg:.2f} \\\\\n")
+        f.write("\\midrule\n")
+
+        for atk_key, atk_label in LOCALIZED_ATTACKS:
+            sub = [r for r in rows if r[0] == atk_label]
+            for i, (_, cond, avg, _) in enumerate(sub):
+                head = f"\\multirow{ {len(sub)}} { *} { {atk_label}} " if i == 0 else ""
+                cond_tex = cond.replace("%", "\\%")
+                f.write(f"{head} & {cond_tex} & {avg:.2f} \\\\\n")
+            f.write("\\midrule\n")
+
+        f.write(f"\\multicolumn{ 2} { l} { \\textbf{ Decision Threshold}  "
+                f"($\\tau$)}  & \\textbf{ {THRESHOLD_PERCENT:.1f}}  \\\\\n")
+        f.write("\\bottomrule\n")
+        f.write("\\end{tabular}\n")
+        f.write("\\end{table}\n")
+
+    print("\n" + "=" * 72)
+    print(" SUMMARY")
+    print("=" * 72)
+    jpeg_min = min(avg for cat, _, avg, _ in rows if cat == "JPEG Compression")
+    jpeg_max = max(avg for cat, _, avg, _ in rows if cat == "JPEG Compression")
+    loc_min  = min(avg for cat, _, avg, _ in rows if cat != "JPEG Compression")
+    loc_max  = max(avg for cat, _, avg, _ in rows if cat != "JPEG Compression")
+    gap      = jpeg_min - loc_max
+    print(f"  JPEG range     : {jpeg_min:5.2f}% .. {jpeg_max:5.2f}%")
+    print(f"  Localized range: {loc_min:5.2f}% .. {loc_max:5.2f}%")
+    print(f"  Separation gap : {gap:5.2f} percentage points "
+          f"(threshold tau = {THRESHOLD_PERCENT:.1f}%)")
+
+if __name__ == '__main__':
+    main()
