@@ -51,6 +51,8 @@ if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
     except AttributeError:
         pass
 
+from skimage.metrics import structural_similarity as _ssim
+
 import my_custom_method as watermark_system
 from generate_detection_metrics import (
     predicted_block_mask,
@@ -290,6 +292,23 @@ def apply_attack(atk_key, wm_img, base_name):
 # -----------------------------------------------------------------------
 # Metrics
 # -----------------------------------------------------------------------
+def calculate_psnr(img1, img2):
+    """PSNR (dB) between two uint8 grayscale images."""
+    if img1 is None or img2 is None:
+        return float("nan")
+    mse = np.mean((img1.astype(np.float64) - img2.astype(np.float64)) ** 2)
+    if mse == 0:
+        return 100.0
+    return 20.0 * math.log10(255.0 / math.sqrt(mse))
+
+
+def calculate_ssim(img1, img2):
+    """SSIM between two uint8 grayscale images."""
+    if img1 is None or img2 is None:
+        return float("nan")
+    return float(_ssim(img1, img2, data_range=255))
+
+
 def evaluate_pair(wm_img, atk_img):
     gt   = groundtruth_block_mask(wm_img, atk_img)
     pred = predicted_block_mask(atk_img)
@@ -301,6 +320,11 @@ def _fmt(v):
     return ("N/A" if v is None or
             (isinstance(v, float) and math.isnan(v))
             else f"{v:.2f}")
+
+def _fmt4(v):
+    return ("N/A" if v is None or
+            (isinstance(v, float) and math.isnan(v))
+            else f"{v:.4f}")
 
 
 # -----------------------------------------------------------------------
@@ -321,6 +345,13 @@ def run_pipeline(file_path, base_name):
     if wm_img is None:
         print(f"  ERROR: cannot read {wm_path}")
         return {}
+
+    # --- WPSNR / WSSIM: original vs watermarked (same for all attacks) ---
+    orig_gray = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
+    wm_gray   = cv2.cvtColor(wm_img, cv2.COLOR_BGR2GRAY)
+    wpsnr = calculate_psnr(orig_gray, wm_gray)
+    wssim = calculate_ssim(orig_gray, wm_gray)
+    print(f"  [watermark quality]  WPSNR={wpsnr:.2f} dB  WSSIM={wssim:.4f}")
 
     results = {}
     for atk_key, _ in IRREGULAR_ATTACKS:
@@ -346,12 +377,23 @@ def run_pipeline(file_path, base_name):
             blank = np.zeros(wm_img.shape[:2], dtype=np.uint8)
             cv2.imwrite(map_path, blank)
 
-        # Evaluate
+        # --- RPSNR / RSSIM: original vs recovered ---
+        rec_gray = cv2.imread(rec_path, cv2.IMREAD_GRAYSCALE)
+        rpsnr = calculate_psnr(orig_gray, rec_gray)
+        rssim = calculate_ssim(orig_gray, rec_gray)
+
+        # Detection metrics
         m = evaluate_pair(wm_img, atk_img)
+        m["wpsnr"] = wpsnr
+        m["wssim"] = wssim
+        m["rpsnr"] = rpsnr
+        m["rssim"] = rssim
         results[atk_key] = m
+
         print(f"rate={_fmt(m['rate'])}%  TPR={_fmt(m['tpr'])}%  "
               f"FPR={_fmt(m['fpr'])}%  Prec={_fmt(m['precision'])}%  "
-              f"Acc={_fmt(m['accuracy'])}%")
+              f"Acc={_fmt(m['accuracy'])}%  "
+              f"RPSNR={rpsnr:.2f}dB  RSSIM={rssim:.4f}")
 
     return results
 
@@ -426,11 +468,15 @@ def write_csv(all_results, image_names):
     atk_keys   = [k for k, _ in IRREGULAR_ATTACKS]
     atk_accum  = {k: [] for k in atk_keys}
 
+    METRIC_KEYS = ("rate", "tpr", "fpr", "precision", "accuracy",
+                   "wpsnr", "wssim", "rpsnr", "rssim")
+
     with open(CSV_OUT, "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["Attack", "Image",
                     "Tampering Rate (%)", "TPR (%)", "FPR (%)",
-                    "Precision (%)", "Accuracy (%)"])
+                    "Precision (%)", "Accuracy (%)",
+                    "WPSNR (dB)", "WSSIM", "RPSNR (dB)", "RSSIM"])
 
         prev_atk = None
         for atk_key in atk_keys:
@@ -441,9 +487,11 @@ def write_csv(all_results, image_names):
                 atk_accum[atk_key].append(m)
                 w.writerow([atk_key if atk_key != prev_atk else "",
                             base_name,
-                            _fmt(m["rate"]),  _fmt(m["tpr"]),
-                            _fmt(m["fpr"]),   _fmt(m["precision"]),
-                            _fmt(m["accuracy"])])
+                            _fmt(m["rate"]),      _fmt(m["tpr"]),
+                            _fmt(m["fpr"]),       _fmt(m["precision"]),
+                            _fmt(m["accuracy"]),
+                            _fmt(m["wpsnr"]),     _fmt4(m["wssim"]),
+                            _fmt(m["rpsnr"]),     _fmt4(m["rssim"])])
                 prev_atk = atk_key
             # Per-attack average
             rows = atk_accum[atk_key]
@@ -451,11 +499,13 @@ def write_csv(all_results, image_names):
                 with warnings.catch_warnings():
                     warnings.simplefilter("ignore", RuntimeWarning)
                     avg = {k: float(np.nanmean([r[k] for r in rows]))
-                           for k in ("rate", "tpr", "fpr", "precision", "accuracy")}
+                           for k in METRIC_KEYS}
                 w.writerow(["", "AVERAGE",
-                            _fmt(avg["rate"]),  _fmt(avg["tpr"]),
-                            _fmt(avg["fpr"]),   _fmt(avg["precision"]),
-                            _fmt(avg["accuracy"])])
+                            _fmt(avg["rate"]),    _fmt(avg["tpr"]),
+                            _fmt(avg["fpr"]),     _fmt(avg["precision"]),
+                            _fmt(avg["accuracy"]),
+                            _fmt(avg["wpsnr"]),   _fmt4(avg["wssim"]),
+                            _fmt(avg["rpsnr"]),   _fmt4(avg["rssim"])])
             w.writerow([])  # blank separator between attack groups
 
     print(f"\nCSV written: {CSV_OUT}")
@@ -495,8 +545,10 @@ def main():
 
     # Summary
     print("\n" + "=" * 70)
-    print("  SUMMARY  (micro-averaged over all images)")
+    print("  SUMMARY  (averaged over all images)")
     print("=" * 70)
+    ALL_KEYS = ("rate", "tpr", "fpr", "precision", "accuracy",
+                "wpsnr", "wssim", "rpsnr", "rssim")
     atk_keys = [k for k, _ in IRREGULAR_ATTACKS]
     for atk_key in atk_keys:
         rows = [all_results.get(n, {}).get(atk_key)
@@ -507,11 +559,17 @@ def main():
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", RuntimeWarning)
             avg = {k: float(np.nanmean([r[k] for r in rows]))
-                   for k in ("rate", "tpr", "fpr", "precision", "accuracy")}
-        print(f"  {atk_key:22s}  rate={_fmt(avg['rate']):>6}%  "
-              f"TPR={_fmt(avg['tpr']):>6}%  FPR={_fmt(avg['fpr']):>6}%  "
+                   for k in ALL_KEYS}
+        print(f"  {atk_key:22s}  "
+              f"rate={_fmt(avg['rate']):>6}%  "
+              f"TPR={_fmt(avg['tpr']):>6}%  "
+              f"FPR={_fmt(avg['fpr']):>6}%  "
               f"Prec={_fmt(avg['precision']):>6}%  "
-              f"Acc={_fmt(avg['accuracy']):>6}%")
+              f"Acc={_fmt(avg['accuracy']):>6}%  "
+              f"WPSNR={_fmt(avg['wpsnr']):>6}dB  "
+              f"WSSIM={_fmt4(avg['wssim'])}  "
+              f"RPSNR={_fmt(avg['rpsnr']):>6}dB  "
+              f"RSSIM={_fmt4(avg['rssim'])}")
 
     print(f"\nGrids  : {os.path.abspath(GRID_DIR)}/")
     print(f"Results: {os.path.abspath(RESULTS_DIR)}/")
