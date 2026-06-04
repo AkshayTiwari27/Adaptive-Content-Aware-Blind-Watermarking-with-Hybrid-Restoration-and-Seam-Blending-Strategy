@@ -1,0 +1,11 @@
+Distortion,Condition,Measured Tampering Rate (%),TPR (%),FPR (%),Precision (%),Accuracy (%)
+Salt & Pepper Noise,1%,14.83,99.96,0.00,100.00,99.99
+Salt & Pepper Noise,3%,38.15,99.97,0.00,100.00,99.99
+Salt & Pepper Noise,5%,55.07,99.97,0.00,100.00,99.98
+Salt & Pepper Noise,7%,67.42,99.97,0.00,100.00,99.98
+Salt & Pepper Noise,9%,76.37,99.97,0.00,100.00,99.98
+JPEG Compression,Q=90,100.00,99.97,N/A,100.00,99.97
+JPEG Compression,Q=70,100.00,99.98,N/A,100.00,99.98
+JPEG Compression,Q=50,100.00,99.97,N/A,100.00,99.97
+JPEG Compression,Q=30,100.00,99.97,N/A,100.00,99.97
+JPEG Compression,Q=10,100.00,99.96,N/A,100.00,99.96
