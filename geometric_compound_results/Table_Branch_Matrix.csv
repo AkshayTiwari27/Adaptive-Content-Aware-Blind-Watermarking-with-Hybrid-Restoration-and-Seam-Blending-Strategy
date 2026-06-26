@@ -1,0 +1,10 @@
+﻿Attack,Boat,Chemicalplant,Clock,Houses,JetPlane,Lake,Mandril,Peppers,Walter-Cronkite,Consensus
+JPEG($Q$=90) + S\&P(3\%),B,B,B,B,B,B,B,B,B,B
+JPEG($Q$=70) + S\&P(5\%),B,B,B,B,B,B,B,B,B,B
+Crop(30\%) + JPEG($Q$=70),B,B,B,B,B,B,B,B,B,B
+Crop(30\%) + S\&P(5\%),B,B,B,B,B,B,B,B,B,B
+Content Removal + JPEG($Q$=90),B,B,B,B,B,B,B,B,B,B
+Content Removal + S\&P(5\%),B,B,B,B,B,B,B,B,B,B
+Copy-Move + JPEG($Q$=70),A,A,A,A,A,A,A,A,A,A
+Copy-Move + S\&P(5\%),B,B,B,B,B,B,B,B,B,B
+S\&P(5\%) $\rightarrow$ Crop(20\%),B,B,B,B,B,B,B,B,B,B
