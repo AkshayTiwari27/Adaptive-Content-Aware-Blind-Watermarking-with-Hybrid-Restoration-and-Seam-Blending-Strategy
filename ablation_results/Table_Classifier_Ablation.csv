@@ -1,0 +1,25 @@
+﻿Classifier Variant,Attack,R-PSNR mean,R-PSNR std,SSIM mean,SSIM std,MS-SSIM mean
+No Classifier (always C),Content Removal,40.32,2.45,0.9798,0.0056,0.9967
+No Classifier (always C),Copy-Move,40.32,3.31,0.9794,0.0039,0.9963
+No Classifier (always C),Splicing,37.72,3.77,0.9694,0.0101,0.9942
+No Classifier (always C),JPEG ($Q=90$),22.17,14.63,0.5506,0.3305,0.4382
+No Classifier (always C),S\&P (0.05),21.44,1.17,0.6219,0.1244,0.8125
+No Classifier (always C),Cropping (40\%),29.79,2.07,0.9145,0.0259,0.9824
+2-Way: no Branch A,Content Removal,40.48,2.34,0.9801,0.0055,0.9967
+2-Way: no Branch A,Copy-Move,40.32,3.31,0.9794,0.0039,0.9963
+2-Way: no Branch A,Splicing,37.72,3.77,0.9694,0.0101,0.9942
+2-Way: no Branch A,JPEG ($Q=90$),22.17,14.63,0.5506,0.3305,0.4382
+2-Way: no Branch A,S\&P (0.05),39.70,2.39,0.9790,0.0040,0.9965
+2-Way: no Branch A,Cropping (40\%),30.55,2.30,0.9231,0.0239,0.9860
+2-Way: no Branch B,Content Removal,40.32,2.45,0.9798,0.0056,0.9967
+2-Way: no Branch B,Copy-Move,40.32,3.31,0.9794,0.0039,0.9963
+2-Way: no Branch B,Splicing,37.72,3.77,0.9694,0.0101,0.9942
+2-Way: no Branch B,JPEG ($Q=90$),39.29,2.27,0.9640,0.0144,0.9958
+2-Way: no Branch B,S\&P (0.05),21.44,1.17,0.6219,0.1244,0.8125
+2-Way: no Branch B,Cropping (40\%),29.79,2.07,0.9145,0.0259,0.9824
+Full DLSBM (3-Way),Content Removal,40.48,2.34,0.9801,0.0055,0.9967
+Full DLSBM (3-Way),Copy-Move,40.32,3.31,0.9794,0.0039,0.9963
+Full DLSBM (3-Way),Splicing,37.72,3.77,0.9694,0.0101,0.9942
+Full DLSBM (3-Way),JPEG ($Q=90$),39.29,2.27,0.9640,0.0144,0.9958
+Full DLSBM (3-Way),S\&P (0.05),39.70,2.39,0.9790,0.0040,0.9965
+Full DLSBM (3-Way),Cropping (40\%),30.55,2.30,0.9231,0.0239,0.9860

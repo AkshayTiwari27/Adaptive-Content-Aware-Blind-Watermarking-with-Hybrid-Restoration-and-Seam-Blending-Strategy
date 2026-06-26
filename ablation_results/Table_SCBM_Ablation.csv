@@ -1,0 +1,10 @@
+﻿Mapping Strategy,Attack,R-PSNR mean,R-PSNR std,R-PSNR CI+-,SSIM mean,SSIM std,MS-SSIM mean
+SCBM (Proposed),Cropping (40\%),30.55,2.30,1.77,0.9231,0.0239,0.9860
+SCBM (Proposed),Content Removal,40.48,2.34,1.79,0.9801,0.0055,0.9967
+SCBM (Proposed),Copy-Move,40.32,3.31,2.54,0.9794,0.0039,0.9963
+Random Bijective,Cropping (40\%),25.18,1.85,1.42,0.8331,0.0640,0.9247
+Random Bijective,Content Removal,40.08,2.44,1.87,0.9793,0.0054,0.9964
+Random Bijective,Copy-Move,39.99,3.37,2.59,0.9790,0.0037,0.9960
+Sequential Shift,Cropping (40\%),21.97,3.51,2.70,0.8498,0.0540,0.9058
+Sequential Shift,Content Removal,40.48,2.33,1.79,0.9803,0.0054,0.9968
+Sequential Shift,Copy-Move,40.32,3.31,2.54,0.9796,0.0038,0.9964
