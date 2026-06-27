@@ -1,0 +1,16 @@
+﻿scene,attack,precision,recall,f1
+portrait_outdoor,object_removal,1.0000,1.0000,1.0000
+portrait_outdoor,copy_move_forgery,1.0000,1.0000,1.0000
+portrait_outdoor,cross_domain_splice,1.0000,1.0000,1.0000
+coastal_scene,object_removal,1.0000,1.0000,1.0000
+coastal_scene,copy_move_forgery,1.0000,1.0000,1.0000
+coastal_scene,cross_domain_splice,1.0000,1.0000,1.0000
+urban_street,object_removal,1.0000,1.0000,1.0000
+urban_street,copy_move_forgery,1.0000,1.0000,1.0000
+urban_street,cross_domain_splice,1.0000,1.0000,1.0000
+natural_landscape,object_removal,1.0000,1.0000,1.0000
+natural_landscape,copy_move_forgery,1.0000,1.0000,1.0000
+natural_landscape,cross_domain_splice,1.0000,1.0000,1.0000
+textile_macro,object_removal,1.0000,1.0000,1.0000
+textile_macro,copy_move_forgery,1.0000,1.0000,1.0000
+textile_macro,cross_domain_splice,1.0000,1.0000,1.0000

@@ -1,5 +1,0 @@
-﻿Attack,Branch,R-PSNR mean,R-PSNR std,R-PSNR CI95,SSIM mean,SSIM std,SSIM CI95,MS-SSIM mean
-credential_forgery,B,43.30,0.68,0.85,0.9829,0.0058,0.0072,0.9969
-copy_move,C/B,35.52,7.42,9.21,0.9778,0.0058,0.0072,0.9886
-splicing,C/B,34.93,7.04,8.74,0.9738,0.0066,0.0082,0.9843
-social_media_jpeg,A/B,33.71,2.71,3.36,0.9310,0.0173,0.0215,0.9842
